@@ -8,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
@@ -30,10 +30,36 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 add_subdirectory(extern/pybind11)
 
 set(PROJECT_SOURCES
-        main.cpp
-        codexmainwindow.cpp
-        codexmainwindow.h
-        codexmainwindow.ui
+    cardstructure.cpp
+    cardstructure.h
+    cardwidget.cpp
+    cardwidget.h
+    cardwidget.ui
+    codexmainwindow.cpp
+    codexmainwindow.h
+    codexmainwindow.ui
+    datastructures.cpp
+    datastructures.h
+    deckcreatorwidget.cpp
+    deckcreatorwidget.h
+    deckcreatorwidget.ui
+    decklistwidget.cpp
+    decklistwidget.h
+    decklistwidget.ui
+    deckwidget.cpp
+    deckwidget.h
+    deckwidget.ui
+    inputform.ui
+    inputwidget.cpp
+    inputwidget.h
+    main.cpp
+    masterstackedwidget.cpp
+    masterstackedwidget.h
+    phraseinputform.cpp
+    phraseinputform.h
+    phraseinputform.ui
+    stlutility.cpp
+    stlutility.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
