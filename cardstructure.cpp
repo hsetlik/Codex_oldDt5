@@ -30,11 +30,19 @@ void Card::updateWithAnswer(int answer)
         easeLevel = 1.3f;
 }
 //===================================================================
-NtaCard::NtaCard(QString native, QString target, PhrasePair* parent) :
+NtaCard::NtaCard(QString native, QString target, PhrasePair* parent, bool flipped) :
     Card(parent, CardType::NTA),
     nativeWord(native),
     targetWord(target)
 {
+    //so that we can easily instantiate forward/reverse version of the card
+    if(flipped)
+    {
+        auto oldTarget = targetWord;
+        targetWord = nativeWord;
+        nativeWord = oldTarget;
+    }
+
 }
 NtaCard::NtaCard(QJsonObject& obj) :
     Card(obj),
@@ -154,6 +162,8 @@ PhrasePairCards::PhrasePairCards(PhrasePair* pair) :
     for(auto& nta : pair->ntaPairs)
     {
         ntaCards.push_back(std::make_unique<NtaCard>(nta.first, nta.second, pair));
+        //add a flipped version of the cards so user gets asked both target->native and native->target
+        ntaCards.push_back(std::make_unique<NtaCard>(nta.first, nta.second, pair, true));
     }
     for(auto & cloze : pair->clozeWords)
     {

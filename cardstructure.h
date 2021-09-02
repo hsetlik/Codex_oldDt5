@@ -96,7 +96,7 @@ protected:
 struct NtaCard : public Card
 {
 public:
-    NtaCard(QString native, QString target, PhrasePair* parent);
+    NtaCard(QString native, QString target, PhrasePair* parent, bool flipped=false);
     NtaCard(QJsonObject& obj);
     NtaCard getInverse()
     {
