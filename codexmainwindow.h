@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <extern/pybind11/include/pybind11/embed.h>
+#include "masterstackedwidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CodexMainWindow; }

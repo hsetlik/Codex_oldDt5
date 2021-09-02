@@ -6,7 +6,8 @@ CodexMainWindow::CodexMainWindow(QWidget *parent)
     , ui(new Ui::CodexMainWindow)
 {
     ui->setupUi(this);
-    pybind11::exec("print('hello world')");
+    auto stack = new MasterStackedWidget();
+    ui->verticalLayout->addWidget(stack);
 }
 
 CodexMainWindow::~CodexMainWindow()
