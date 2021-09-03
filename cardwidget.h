@@ -66,7 +66,6 @@ public:
     explicit CardViewer(std::vector<Card*>& cards, QWidget *parent = nullptr);
     void nextCard();
     void repeatCard();
-    std::vector<int> lengthsForCard();
     Card* getCurrent() {return currentContent->linkedCard; }
 public Q_SLOTS:
     void flip();

@@ -172,14 +172,6 @@ void CardViewer::addContentForCard(Card* card)
     contentLayout->addWidget(newContent);
     currentContent = newContent;
 }
-std::vector<int> CardViewer::lengthsForCard()
-{
-    auto numAnswers = currentContent->linkedCard->getTimesAnswered();
-    int lHard = Card::daysToDelay(numAnswers, 2);
-    int lMed = Card::daysToDelay(numAnswers, 3);
-    int lEasy = Card::daysToDelay(numAnswers, 4);
-    return {lHard, lMed, lEasy};
-}
 //===========================================================================
 CardWidget::CardWidget(Deck* deck, QWidget *parent) :
     QWidget(parent),

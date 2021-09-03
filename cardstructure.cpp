@@ -4,6 +4,14 @@
 //Implements the SuperMemo SM-2 spaced repitition algorithm described here: https://en.wikipedia.org/wiki/SuperMemo#Algorithms
 void Card::updateWithAnswer(int answer)
 {
+    //adjust the ease level appropriately based on the answer. try tweaking these constants
+    const float paramA = 0.1f;
+    const float paramB = 0.08f;
+    const float paramC = 0.02f;
+    auto dEase = (paramA - (4 - answer) * (paramB + (4 - answer) * paramC));
+    easeLevel += dEase;
+    if(easeLevel < 1.3f)
+        easeLevel = 1.3f;
     // 0 <= answer < 5
     if(answer > 0)
     {
@@ -20,18 +28,17 @@ void Card::updateWithAnswer(int answer)
         timesAnswered = 0;
         intervalDays = 1;
     }
-    //adjust the ease level appropriately based on the answer. try tweaking these constants
-    const float paramA = 0.1f;
-    const float paramB = 0.08f;
-    const float paramC = 0.02f;
-    auto dEase = (paramA - (4 - answer) * (paramB + (4 - answer) * paramC));
-    easeLevel += dEase;
-    if(easeLevel< 1.3f)
-        easeLevel = 1.3f;
     setDueIn(intervalDays);
 }
 int Card::daysForAnswer(int answer)
 {
+    const float paramA = 0.1f;
+    const float paramB = 0.08f;
+    const float paramC = 0.02f;
+    auto dEase = (paramA - (4 - answer) * (paramB + (4 - answer) * paramC));
+    auto tempEaseLevel = easeLevel + dEase;
+    if(tempEaseLevel < 1.3f)
+        tempEaseLevel = 1.3f;
     if(answer > 0)
     {
         if(timesAnswered == 0)
@@ -39,7 +46,7 @@ int Card::daysForAnswer(int answer)
         else if(timesAnswered == 1)
             return 3;
         else
-            return (int)std::floor(intervalDays * easeLevel);
+            return (int)std::floor(intervalDays * tempEaseLevel);
     }
     else
         return 1;
