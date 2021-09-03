@@ -20,10 +20,13 @@ public:
 Q_SIGNALS:
     void goToInputScreen();
     void studyScreenWith();
+    void goBack();
 private Q_SLOTS:
     void on_addButton_clicked();
 
     void on_studyButton_clicked();
+
+    void on_backButton_clicked();
 
 private:
     Ui::DeckWidget *ui;

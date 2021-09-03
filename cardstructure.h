@@ -76,6 +76,8 @@ struct Card
     }
     int getTimesAnswered() {return timesAnswered; }
     int getLastAnswer() {return lastAnswer; }
+    void resetEase() {easeLevel = 2.5f; }
+    void resetTimesAnswered() {timesAnswered = 0; }
 protected:
     QDateTime dateNextDue;
     QString parentPairId;
@@ -176,6 +178,8 @@ public:
     void saveToFile();
     QString getName() {return deckName; }
     void pushBackDueDates(int numDays);
+    void resetEaseFactors();
+    void resetAnswerHistories();
     QLocale getNativeLocale() {return nativeLocale; }
     QLocale getTargetLocale() {return targetLocale; }
 private:

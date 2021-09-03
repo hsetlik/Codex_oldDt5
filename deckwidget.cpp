@@ -37,3 +37,9 @@ void DeckWidget::on_studyButton_clicked()
     Q_EMIT studyScreenWith();
 }
 
+
+void DeckWidget::on_backButton_clicked()
+{
+    Q_EMIT goBack();
+}
+

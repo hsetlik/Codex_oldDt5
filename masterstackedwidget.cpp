@@ -37,9 +37,12 @@ void MasterStackedWidget::switchToPhraseInput()
 
 void MasterStackedWidget::openDeckWithName(QString name)
 {
+    //make sure any changes in the open deck are saved to disk before we take it out of memory
+    if(currentDeck != nullptr)
+        currentDeck->saveToFile();
     currentDeck.reset(new Deck(name));
     //! note this is only here for debuging
-    currentDeck->pushBackDueDates(3);
+    //currentDeck->pushBackDueDates(3);
     auto cardsDue = currentDeck->numDueToday();
     printf("%d cards due today\n", cardsDue);
     deckScreen = new DeckWidget(&*currentDeck, this);
@@ -50,6 +53,7 @@ void MasterStackedWidget::openDeckWithName(QString name)
     addWidget(editorScreen);
     addWidget(phraseScreen);
     connect(deckScreen, &DeckWidget::goToInputScreen, this, &MasterStackedWidget::switchToPhraseInput);
+    connect(deckScreen, &DeckWidget::goBack, this, &MasterStackedWidget::switchToDeckList);
     connect(phraseScreen, &PhraseInputForm::getPairList, editorScreen, &InputWidget::prepareEditorsFor);
     connect(phraseScreen, &PhraseInputForm::getPairList, this, &MasterStackedWidget::switchToCardEditors);
     connect(phraseScreen, &PhraseInputForm::exitToDeck, this, &MasterStackedWidget::switchToDeckView);
@@ -89,4 +93,12 @@ void MasterStackedWidget::createNewDeck(QLocale native, QLocale target, QString 
     setCurrentWidget(deckMenuScreen);
     connect(deckMenuScreen, &DeckListWidget::openDeck, this, &MasterStackedWidget::openDeckWithName);
     connect(deckMenuScreen, &DeckListWidget::launchNewDeckDialog, this, &MasterStackedWidget::switchToDeckCreatorView);
+}
+
+void MasterStackedWidget::switchToDeckList()
+{
+    if(currentDeck != nullptr)
+        currentDeck->saveToFile();
+    deckMenuScreen->updateLabels();
+    setCurrentWidget(deckMenuScreen);
 }

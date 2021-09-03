@@ -407,3 +407,13 @@ void Deck::pushBackDueDates(int numDays)
         card->setDueIn(numDays * -1);
     }
 }
+void Deck::resetEaseFactors()
+{
+    for (auto& card : allCards)
+        card->resetEase();
+}
+void Deck::resetAnswerHistories()
+{
+    for (auto & card : allCards)
+        card->resetTimesAnswered();
+}

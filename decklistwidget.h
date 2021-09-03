@@ -14,8 +14,11 @@ class DeckMenuItem : public QWidget
     Q_OBJECT
 public:
     explicit DeckMenuItem(QString name, QWidget* parent = nullptr);
+    void refreshLabel();
     QPushButton* deckButton;
     QLabel* dueLabel;
+private:
+    const QString deckName;
 
 };
 //==========================================================
@@ -29,6 +32,7 @@ class DeckListWidget : public QWidget
 public:
     explicit DeckListWidget(QWidget *parent = nullptr);
     ~DeckListWidget();
+    void updateLabels();
 public Q_SLOTS:
     void on_newDeckButton_clicked() { Q_EMIT launchNewDeckDialog(); }
     void on_manageDecksButon_clicked();
@@ -38,6 +42,7 @@ Q_SIGNALS:
     void openDeck(QString name);
 private:
     Ui::DeckListWidget *ui;
+    std::vector<DeckMenuItem*> menuItems;
 };
 
 #endif // DECKLISTWIDGET_H

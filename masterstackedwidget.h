@@ -36,6 +36,7 @@ private Q_SLOTS:
         setCurrentWidget(deckScreen);
         deckScreen->updateLabels();
     }
+    void switchToDeckList();
     void createNewDeck(QLocale native, QLocale target, QString name);
 public Q_SLOTS:
     void finishAddingCards(QJsonArray pairs);

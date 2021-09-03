@@ -30,17 +30,17 @@
       </property>
      </widget>
     </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="addButton">
+      <property name="text">
+       <string>Add Cards</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="1">
      <widget class="QLabel" name="cardsDueLabel">
       <property name="text">
        <string>Cards due:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="nameLabel">
-      <property name="text">
-       <string>Deck:</string>
       </property>
      </widget>
     </item>
@@ -58,14 +58,27 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="addButton">
+    <item row="0" column="0">
+     <widget class="QLabel" name="nameLabel">
       <property name="text">
-       <string>Add Cards</string>
+       <string>Deck:</string>
       </property>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="backButton">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>50</y>
+     <width>80</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Back</string>
+   </property>
   </widget>
  </widget>
  <resources/>
