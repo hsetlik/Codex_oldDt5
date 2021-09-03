@@ -67,6 +67,7 @@ public:
     void nextCard();
     void repeatCard();
     std::vector<int> lengthsForCard();
+    Card* getCurrent() {return currentContent->linkedCard; }
 public Q_SLOTS:
     void flip();
 Q_SIGNALS:

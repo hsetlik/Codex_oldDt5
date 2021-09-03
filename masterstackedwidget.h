@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QStackedWidget>
 #include "deckcreatorwidget.h"
+#include "pythonttsengine.h"
 
 class MasterStackedWidget : public QStackedWidget
 {
@@ -47,6 +48,7 @@ private:
     CardWidget* studyScreen;
     PhraseInputForm* phraseScreen;
     InputWidget* editorScreen;
+    PythonTtsEngine engine;
 Q_SIGNALS:
 
 };

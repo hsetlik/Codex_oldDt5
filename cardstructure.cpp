@@ -28,6 +28,21 @@ void Card::updateWithAnswer(int answer)
     easeLevel += dEase;
     if(easeLevel< 1.3f)
         easeLevel = 1.3f;
+    setDueIn(intervalDays);
+}
+int Card::daysForAnswer(int answer)
+{
+    if(answer > 0)
+    {
+        if(timesAnswered == 0)
+            return 1;
+        else if(timesAnswered == 1)
+            return 3;
+        else
+            return (int)std::floor(intervalDays * easeLevel);
+    }
+    else
+        return 1;
 }
 //===================================================================
 NtaCard::NtaCard(QString native, QString target, PhrasePair* parent, bool flipped) :

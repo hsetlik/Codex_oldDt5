@@ -73,10 +73,12 @@ struct Card
         };
         return obj;
     }
+    int daysForAnswer(int answer);
     void updateWithAnswer(int answer);
     void setDueIn(int numDays)
     {
-        dateNextDue = dateNextDue.addDays(numDays);
+        auto date = QDateTime::currentDateTime();
+        dateNextDue = date.addDays(numDays);
     }
     bool isDue(QDateTime current)
     {

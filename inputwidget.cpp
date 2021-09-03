@@ -236,7 +236,9 @@ PhrasePairWidget::PhrasePairWidget(PhrasePair* pair, QWidget* parent) :
     QString nativeQ = linkedPair->nativePhrase.fullPhrase;
     QString targetQ = linkedPair->targetPhrase.fullPhrase;
     nativePhrase = new NPhraseWidget(nativeQ, linkedPair, this);
+    //nativePhrase->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     targetPhrase = new TPhraseWidget(targetQ, linkedPair, this);
+    //targetPhrase->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     auto layout = new QVBoxLayout;
     layout->addWidget(nativePhrase);
     layout->addWidget(targetPhrase);
@@ -286,6 +288,8 @@ InputWidget::InputWidget(QWidget *parent) :
 
 void InputWidget::advancePhrasePair()
 {
+    if(allPairs.size() < 1)
+        return;
     if(currentPhrasePair != nullptr)
     {
         createdCardSets.push_back(PhrasePairCards(currentPhrasePair->linkedPair));

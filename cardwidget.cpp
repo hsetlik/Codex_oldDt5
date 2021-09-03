@@ -195,8 +195,10 @@ CardWidget::CardWidget(Deck* deck, QWidget *parent) :
     ui->setupUi(this);
     ui->contentVBox->addWidget(viewer);
     connect(viewer, &CardViewer::finishStudyMode, this, &CardWidget::finishStudying);
-    auto newValues = viewer->lengthsForCard();
-    setButtonDayValues(newValues[0], newValues[1], newValues[2]);
+    auto a1 = viewer->getCurrent()->daysForAnswer(1);
+    auto a2 = viewer->getCurrent()->daysForAnswer(2);
+    auto a3 = viewer->getCurrent()->daysForAnswer(3);
+    setButtonDayValues(a1, a2, a3);
     setButtonsVisible(false);
     updateIndexLabel();
 }
@@ -206,8 +208,10 @@ void CardWidget::nextCard()
     ++cardIdx;
     viewer->nextCard();
     updateIndexLabel();
-    auto newValues = viewer->lengthsForCard();
-    setButtonDayValues(newValues[0], newValues[1], newValues[2]);
+    auto a1 = viewer->getCurrent()->daysForAnswer(1);
+    auto a2 = viewer->getCurrent()->daysForAnswer(2);
+    auto a3 = viewer->getCurrent()->daysForAnswer(3);
+    setButtonDayValues(a1, a2, a3);
     setButtonsVisible(false);
 }
 CardWidget::~CardWidget()

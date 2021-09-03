@@ -60,6 +60,8 @@ set(PROJECT_SOURCES
     phraseinputform.ui
     stlutility.cpp
     stlutility.h
+    pythonttsengine.h
+    pythonttsengine.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
