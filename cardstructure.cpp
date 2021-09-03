@@ -417,3 +417,28 @@ void Deck::resetAnswerHistories()
     for (auto & card : allCards)
         card->resetTimesAnswered();
 }
+void Deck::exportDeck(QDir& dir, QString newName, bool keepHistory)
+{
+    //make sure that we're exporting all new changes
+    saveToFile();
+    //create a temporary deck object to edit without affecting this object
+    auto tempDeck = new Deck(deckName);
+    tempDeck->setName(newName);
+    if(!keepHistory)
+    {
+        tempDeck->resetAnswerHistories();
+        tempDeck->resetEaseFactors();
+        tempDeck->pushBackDueDates(0);
+    }
+
+    auto fullPath = dir.filePath(newName + ".json");
+
+    QFile loadFile(fullPath);
+    if(!loadFile.open(QIODevice::ReadWrite))
+        printf("File not loaded\n");
+    QJsonDocument deckDoc(tempDeck->getDeckAsObject());
+    auto bytesWritten = loadFile.write(deckDoc.toJson());
+    printf("%lld bytes exported to file\n", bytesWritten);
+    loadFile.close();
+    delete tempDeck;
+}

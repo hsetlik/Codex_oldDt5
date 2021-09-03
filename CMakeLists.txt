@@ -62,6 +62,9 @@ set(PROJECT_SOURCES
     stlutility.h
     pythonttsengine.h
     pythonttsengine.cpp
+    deckmanagerwidget.h
+    deckmanagerwidget.cpp
+    deckmanagerwidget.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

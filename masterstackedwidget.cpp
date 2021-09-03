@@ -9,6 +9,7 @@ MasterStackedWidget::MasterStackedWidget(QWidget *parent) :
     setCurrentWidget(deckMenuScreen);
     connect(deckMenuScreen, &DeckListWidget::openDeck, this, &MasterStackedWidget::openDeckWithName);
     connect(deckMenuScreen, &DeckListWidget::launchNewDeckDialog, this, &MasterStackedWidget::switchToDeckCreatorView);
+    connect(deckMenuScreen, &DeckListWidget::launchDeckManager, this, &MasterStackedWidget::switchToDeckManager);
 }
 
 void MasterStackedWidget::switchToCardEditors()
@@ -93,6 +94,7 @@ void MasterStackedWidget::createNewDeck(QLocale native, QLocale target, QString 
     setCurrentWidget(deckMenuScreen);
     connect(deckMenuScreen, &DeckListWidget::openDeck, this, &MasterStackedWidget::openDeckWithName);
     connect(deckMenuScreen, &DeckListWidget::launchNewDeckDialog, this, &MasterStackedWidget::switchToDeckCreatorView);
+    connect(deckMenuScreen, &DeckListWidget::launchDeckManager, this, &MasterStackedWidget::switchToDeckManager);
 }
 
 void MasterStackedWidget::switchToDeckList()
@@ -101,4 +103,11 @@ void MasterStackedWidget::switchToDeckList()
         currentDeck->saveToFile();
     deckMenuScreen->updateLabels();
     setCurrentWidget(deckMenuScreen);
+}
+
+void MasterStackedWidget::switchToDeckManager()
+{
+    deckManager = new DeckManagerWidget(this);
+    addWidget(deckManager);
+    setCurrentWidget(deckManager);
 }

@@ -182,6 +182,8 @@ public:
     void resetAnswerHistories();
     QLocale getNativeLocale() {return nativeLocale; }
     QLocale getTargetLocale() {return targetLocale; }
+    void exportDeck(QDir& dir, QString newName, bool keepHistory);
+    void setName(QString str) {deckName = str; }
 private:
     QString deckName;
     QJsonObject getDeckAsObject();

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QStackedWidget>
-#include "deckcreatorwidget.h"
+#include "deckmanagerwidget.h"
 #include "pythonttsengine.h"
 
 class MasterStackedWidget : public QStackedWidget
@@ -36,6 +36,7 @@ private Q_SLOTS:
         setCurrentWidget(deckScreen);
         deckScreen->updateLabels();
     }
+    void switchToDeckManager();
     void switchToDeckList();
     void createNewDeck(QLocale native, QLocale target, QString name);
 public Q_SLOTS:
@@ -45,6 +46,7 @@ private:
     std::unique_ptr<Deck> currentDeck;
     DeckListWidget* deckMenuScreen;
     DeckCreatorWidget* deckCreator;
+    DeckManagerWidget* deckManager;
     DeckWidget* deckScreen;
     CardWidget* studyScreen;
     PhraseInputForm* phraseScreen;

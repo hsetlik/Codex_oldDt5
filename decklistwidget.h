@@ -38,6 +38,7 @@ public Q_SLOTS:
     void on_manageDecksButon_clicked();
     void deckButtonClicked();
 Q_SIGNALS:
+    void launchDeckManager();
     void launchNewDeckDialog();
     void openDeck(QString name);
 private:

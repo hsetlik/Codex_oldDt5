@@ -58,8 +58,8 @@ DeckListWidget::~DeckListWidget()
 }
 void DeckListWidget::on_manageDecksButon_clicked()
 {
-    //todo: set up a deck manager
-
+    printf("Manage decks clicked\n");
+    Q_EMIT launchDeckManager();
 }
 void DeckListWidget::deckButtonClicked()
 {
