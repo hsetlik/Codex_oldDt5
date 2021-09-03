@@ -2,6 +2,20 @@
 #include "ui_decklistwidget.h"
 #include <QtWidgets>
 
+DeckMenuItem::DeckMenuItem(QString name, QWidget* parent) : QWidget(parent)
+{
+    auto tempDeck = new Deck(name);
+    const int numDue = tempDeck->numDueToday();
+    QString labelText = "Due Today: " + QString::number(numDue);
+    auto hLayout = new QHBoxLayout;
+    deckButton = new QPushButton(name, this);
+    dueLabel = new QLabel(labelText, this);
+    hLayout->addWidget(deckButton);
+    hLayout->addWidget(dueLabel);
+    setLayout(hLayout);
+    delete tempDeck;
+}
+//==================================================================
 DeckListWidget::DeckListWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DeckListWidget)
@@ -23,9 +37,9 @@ DeckListWidget::DeckListWidget(QWidget *parent) :
     //create all the deck buttons
     for (auto& name : deckNames)
     {
-        auto button = new QPushButton(name, this);
+        auto button = new DeckMenuItem(name, this);
         ui->decksVBox->addWidget(button);
-        connect(button, &QPushButton::clicked, this, &DeckListWidget::deckButtonClicked);
+        connect(button->deckButton, &QPushButton::clicked, this, &DeckListWidget::deckButtonClicked);
     }
 }
 DeckListWidget::~DeckListWidget()

@@ -8,6 +8,17 @@
 #include "deckwidget.h"
 #include "cardwidget.h"
 
+//basic widget with a button and a label for cards due
+class DeckMenuItem : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit DeckMenuItem(QString name, QWidget* parent = nullptr);
+    QPushButton* deckButton;
+    QLabel* dueLabel;
+
+};
+//==========================================================
 namespace Ui {
 class DeckListWidget;
 }
