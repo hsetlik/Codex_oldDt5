@@ -22,24 +22,6 @@ private Q_SLOTS:
     void on_statsClick() { Q_EMIT openStatsViewer(deckName); }
 };
 //==============================================================
-class ExportDeckDialog : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit ExportDeckDialog (QString deckName, QWidget* parent);
-    QFileDialog* getDialog() { return dialog; }
-private:
-    QFileDialog* dialog;
-    QLineEdit* nameEdit;
-    QCheckBox* eraseBox;
-};
-
-
-
-
-
-//==============================================================
-
 
 namespace Ui {
 class DeckManagerWidget;

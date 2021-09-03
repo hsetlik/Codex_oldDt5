@@ -19,23 +19,6 @@ DeckManagerRow::DeckManagerRow(QString name, QWidget* parent) :
     connect(exportButton, &QPushButton::clicked, this, &DeckManagerRow::on_exportClick);
     connect(viewStatsButton, &QPushButton::clicked, this, &DeckManagerRow::on_statsClick);
 }
-//======================================================
-ExportDeckDialog::ExportDeckDialog (QString deckName, QWidget* parent) :
-    QWidget(parent)
-{
-    auto tempDeck = new Deck(deckName);
-    dialog = new QFileDialog(this);
-    dialog->setFileMode(QFileDialog::Directory);
-    auto vLayout = new QVBoxLayout;
-    vLayout->addWidget(dialog);
-    auto hLayout = new QHBoxLayout;
-    nameEdit = new QLineEdit(deckName, this);
-    eraseBox = new QCheckBox("Include History?", this);
-    hLayout->addWidget(nameEdit);
-    hLayout->addWidget(eraseBox);
-    vLayout->addLayout(hLayout);
-    setLayout(vLayout);
-}
 
 //======================================================
 DeckManagerWidget::DeckManagerWidget(QWidget *parent) :

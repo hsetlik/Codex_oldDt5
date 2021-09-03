@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/scripts">
+        <file>scripts/test_script.py</file>
+        <file>scripts/tts_engine.py</file>
+    </qresource>
+</RCC>

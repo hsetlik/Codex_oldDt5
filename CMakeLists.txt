@@ -29,6 +29,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 #make sure the pybind headers are accessible
 add_subdirectory(extern/pybind11)
 
+set(CMAKE_AUTORCC ON)
+
 set(PROJECT_SOURCES
     cardstructure.cpp
     cardstructure.h
@@ -65,6 +67,7 @@ set(PROJECT_SOURCES
     deckmanagerwidget.h
     deckmanagerwidget.cpp
     deckmanagerwidget.ui
+    python_resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
