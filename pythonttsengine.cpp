@@ -17,6 +17,7 @@ PythonTtsEngine::PythonTtsEngine()
     }
     else
         printf("Engine script exists\n");
+    py::object scope = py::module_::import("__main__").attr("__dict__");
     engineMod = py::module_::import("tts_engine");
     //test stuff
     auto connected = engineMod.attr("has_connection")();
@@ -50,8 +51,15 @@ PythonTtsEngine::PythonTtsEngine()
    gTTSMod = py::module_::import("gtts");
    pyttsMod = py::module_::import("pyttsx3");
    playsoundMod = py::module_::import("playsound");
-   auto obj = engineMod.attr("speak")("Example Sentence", "en");
+}
 
+void PythonTtsEngine::execSpeak(QString text, QString language)
+{
+
+    auto pText = text.toStdString().c_str();
+    auto pLang = language.toStdString().c_str();
+    auto speakFunc = engineMod.attr("speak");
+    speakFunc(pText, pLang);
 }
 
 void PythonTtsEngine::copyFileContents(QFile& from, QFile& to)
@@ -92,8 +100,4 @@ void PythonTtsEngine::copyDir(const QString &fromDir, const QString &toDir)
             }
         }
     }
-}
-
-void PythonTtsEngine::installPythonLibrary(QString& resourcePath)
-{
 }

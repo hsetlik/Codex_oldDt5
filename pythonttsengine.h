@@ -14,8 +14,8 @@ public:
     PythonTtsEngine();
     static void copyFileContents(QFile& from, QFile& to);
     static void copyDir(const QString &fromDir, const QString &toDir);
+    void execSpeak(QString text, QString language);
 
-    void installPythonLibrary(QString& resourcePath);
 private:
     py::module_ gTTSMod;
     py::module_ engineMod;
