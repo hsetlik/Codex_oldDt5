@@ -13,9 +13,13 @@ class PythonTtsEngine
 public:
     PythonTtsEngine();
     static void copyFileContents(QFile& from, QFile& to);
+    static void copyDir(const QString &fromDir, const QString &toDir);
+
+    void installPythonLibrary(QString& resourcePath);
 private:
     py::module_ gTTSMod;
     py::module_ engineMod;
+    py::module_ pyttsMod;
 
 
 };
