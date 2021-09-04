@@ -31,14 +31,7 @@ def set_pytts_voice(engine, lang):
 
 
 def speak(text, language='en'):
-    connected = has_connection()
-    if connected:
-        # todo: set up an algorithm to randomize parameters
-        g_output = gTTS(text, lang=language)
-        g_output.save('currentsound.mp3')
-    else:
-        engine = pyttsx3.init()
-        set_pytts_voice(engine, language)
-        # engine.save_to_file(text, 'currentsound.mp3')
-        engine.say(text)
-        engine.runAndWait()
+    engine = pyttsx3.init()
+    set_pytts_voice(engine, language)
+    engine.say(text)
+    engine.runAndWait()
