@@ -42,6 +42,7 @@ PythonTtsEngine::PythonTtsEngine()
    }
    gTTSMod = py::module_::import("gtts");
    pyttsMod = py::module_::import("pyttsx3");
+   auto obj = engineMod.attr("speak")("Example Sentence", "en");
 
 }
 

@@ -1,3 +1,4 @@
+import sys
 from gtts import gTTS
 import pyttsx3
 import urllib.request
@@ -26,7 +27,7 @@ def set_pytts_voice(engine, lang):
                 return
 
 
-def speak(text, language):
+def speak(text, language='en'):
     connected = has_connection()
     if connected:
         # todo: set up an algorithm to randomize parameters
