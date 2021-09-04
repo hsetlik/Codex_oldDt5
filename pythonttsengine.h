@@ -20,6 +20,7 @@ private:
     py::module_ gTTSMod;
     py::module_ engineMod;
     py::module_ pyttsMod;
+    py::module_ playsoundMod;
 
 
 };

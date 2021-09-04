@@ -71,5 +71,16 @@
         <file>extern/pyttsx3/requirements.txt</file>
         <file>extern/pyttsx3/setup.cfg</file>
         <file>extern/pyttsx3/setup.py</file>
+        <file>extern/playsound/test_media/Damonte.mp3</file>
+        <file>extern/playsound/test_media/Discovery - Go at throttle up (2).mp3</file>
+        <file>extern/playsound/test_media/Sound4.wav</file>
+        <file>extern/playsound/test_media/Буква_Я.wav</file>
+        <file>extern/playsound/CHANGES</file>
+        <file>extern/playsound/LICENSE</file>
+        <file>extern/playsound/MANIFEST.in</file>
+        <file>extern/playsound/playsound.py</file>
+        <file>extern/playsound/README.rst</file>
+        <file>extern/playsound/setup.py</file>
+        <file>extern/playsound/test.py</file>
     </qresource>
 </RCC>

@@ -40,8 +40,16 @@ PythonTtsEngine::PythonTtsEngine()
        copyDir(resourceFolderName, "pyttsx3");
        printf("pyttsx3 Copied\n");
    }
+   auto playsoundDir = QDir("playsound");
+   if(!playsoundDir.exists())
+   {
+       QString resourceFolderName = "://libraries/extern/playsound";
+       copyDir(resourceFolderName, "playsound");
+       printf("playsound Copied\n");
+   }
    gTTSMod = py::module_::import("gtts");
    pyttsMod = py::module_::import("pyttsx3");
+   playsoundMod = py::module_::import("playsound");
    auto obj = engineMod.attr("speak")("Example Sentence", "en");
 
 }
