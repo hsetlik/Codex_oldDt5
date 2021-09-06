@@ -43,7 +43,7 @@ void MasterStackedWidget::openDeckWithName(QString name)
         currentDeck->saveToFile();
     currentDeck.reset(new Deck(name));
     //! note this is only here for debuging
-    //currentDeck->pushBackDueDates(3);
+    currentDeck->pushBackDueDates(3);
     auto cardsDue = currentDeck->numDueToday();
     printf("%d cards due today\n", cardsDue);
     deckScreen = new DeckWidget(&*currentDeck, this);

@@ -1,18 +1,19 @@
 #include "cardstructure.h"
 #include <memory>
+
+//parameters for the SM-2 algorithm. Tweaked since Codex uses fewer answer rating options than the original Super Memo
+#define SM2A 0.25f  //orig 0.1f
+#define SM2B 0.06f //orig 0.08f
+#define SM2C 0.04f //orig 0.02f
 //===================================================================
 //Implements the SuperMemo SM-2 spaced repitition algorithm described here: https://en.wikipedia.org/wiki/SuperMemo#Algorithms
 void Card::updateWithAnswer(int answer)
 {
-    //adjust the ease level appropriately based on the answer. try tweaking these constants
-    const float paramA = 0.1f;
-    const float paramB = 0.08f;
-    const float paramC = 0.02f;
-    auto dEase = (paramA - (4 - answer) * (paramB + (4 - answer) * paramC));
+    auto dEase = (SM2A - (4 - answer) * (SM2B + (4 - answer) * SM2C));
     easeLevel += dEase;
     if(easeLevel < 1.3f)
         easeLevel = 1.3f;
-    // 0 <= answer < 5
+    // 0 <= answer < 4
     if(answer > 0)
     {
         if(timesAnswered == 0)
@@ -32,10 +33,8 @@ void Card::updateWithAnswer(int answer)
 }
 int Card::daysForAnswer(int answer)
 {
-    const float paramA = 0.1f;
-    const float paramB = 0.08f;
-    const float paramC = 0.02f;
-    auto dEase = (paramA - (4 - answer) * (paramB + (4 - answer) * paramC));
+
+    auto dEase = (SM2A - (4 - answer) * (SM2B + (4 - answer) * SM2C));
     auto tempEaseLevel = easeLevel + dEase;
     if(tempEaseLevel < 1.3f)
         tempEaseLevel = 1.3f;
