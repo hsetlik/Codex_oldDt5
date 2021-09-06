@@ -9,7 +9,7 @@ PythonTtsEngine::PythonTtsEngine()
     auto dir = QDir::current();
     auto engineScriptPath = dir.absoluteFilePath("tts_engine.py");
     QFile engineScriptFile(engineScriptPath);
-    if(!engineScriptFile.exists())
+    if(true) //note: change this to check whether the file exists for actual build
     {
         printf("Engine script not found\n");
         QFile engineFile("://scripts/scripts/tts_engine.py");
@@ -51,15 +51,20 @@ PythonTtsEngine::PythonTtsEngine()
    gTTSMod = py::module_::import("gtts");
    pyttsMod = py::module_::import("pyttsx3");
    playsoundMod = py::module_::import("playsound");
+
+   //test gTTS
+   /*
+    tts = gTTS('hello', lang='en')
+    tts.save('hello.mp3')
+    */
+   //auto gttsObj = gTTSMod.attr("gTTS")("example text", "en");
+   //gttsObj.attr("save")("example.mp3");
 }
 
-void PythonTtsEngine::execSpeak(QString text, QString language)
+void PythonTtsEngine::execSpeak(const char* text, const char* language)
 {
-
-    auto pText = text.toStdString().c_str();
-    auto pLang = language.toStdString().c_str();
     auto speakFunc = engineMod.attr("speak");
-    speakFunc(pText, pLang);
+    speakFunc(text, language);
 }
 
 void PythonTtsEngine::copyFileContents(QFile& from, QFile& to)

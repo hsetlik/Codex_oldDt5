@@ -110,4 +110,5 @@ void MasterStackedWidget::switchToDeckManager()
     deckManager = new DeckManagerWidget(this);
     addWidget(deckManager);
     setCurrentWidget(deckManager);
+    connect(deckManager, &DeckManagerWidget::exitDeckManager, this, &MasterStackedWidget::switchToDeckList);
 }

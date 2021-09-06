@@ -27,7 +27,7 @@ def set_pytts_voice(engine, lang):
             print('Language is: ' + language)
             if lang == language:
                 engine.setProperty('voice', voice.id)
-                return
+                break
 
 
 def speak(text, language='en'):

@@ -34,7 +34,7 @@ private:
     QLabel* nativeLabel;
     QVBoxLayout* layout;
 };
-//==========================================================
+//================================================================
 class ClozeContent : public CardContent
 {
     Q_OBJECT

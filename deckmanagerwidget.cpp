@@ -118,3 +118,9 @@ void DeckManagerWidget::chooseFolder()
     }
     delete tempDeck;
 }
+
+void DeckManagerWidget::on_backButton_clicked()
+{
+    Q_EMIT exitDeckManager();
+}
+

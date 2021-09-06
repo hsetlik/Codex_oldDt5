@@ -33,10 +33,14 @@ class DeckManagerWidget : public QWidget
 public:
     explicit DeckManagerWidget(QWidget *parent = nullptr);
     ~DeckManagerWidget();
+Q_SIGNALS:
+    void exitDeckManager();
 private Q_SLOTS:
     void createExportDialog(QString name);
     void openStatsWidget(QString name);
     void chooseFolder();
+    void on_backButton_clicked();
+
 private:
     Ui::DeckManagerWidget *ui;
     std::vector<DeckManagerRow*> rows;

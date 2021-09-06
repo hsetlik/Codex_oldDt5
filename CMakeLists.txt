@@ -26,6 +26,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+# ensure network stuff gets included
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+
 #make sure the pybind headers are accessible
 add_subdirectory(extern/pybind11)
 
@@ -90,6 +93,8 @@ endif()
 target_link_libraries(Codex PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 target_link_libraries(Codex PRIVATE pybind11::embed)
+
+target_link_libraries(Codex  PRIVATE Qt${QT_VERSION_MAJOR}::Network)
 
 set_target_properties(Codex PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
