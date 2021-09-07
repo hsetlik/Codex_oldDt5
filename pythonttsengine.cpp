@@ -51,14 +51,6 @@ PythonTtsEngine::PythonTtsEngine()
    gTTSMod = py::module_::import("gtts");
    pyttsMod = py::module_::import("pyttsx3");
    playsoundMod = py::module_::import("playsound");
-
-   //test gTTS
-   /*
-    tts = gTTS('hello', lang='en')
-    tts.save('hello.mp3')
-    */
-   //auto gttsObj = gTTSMod.attr("gTTS")("example text", "en");
-   //gttsObj.attr("save")("example.mp3");
 }
 
 void PythonTtsEngine::execSpeak(const char* text, const char* language)

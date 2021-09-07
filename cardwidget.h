@@ -35,6 +35,19 @@ private:
     QVBoxLayout* layout;
 };
 //================================================================
+class ClozeLabel: public QLabel
+{
+    Q_OBJECT
+public:
+    explicit ClozeLabel(QString correct, QString answer, QWidget* parent=nullptr);
+    void paintEvent(QPaintEvent*) override;
+private:
+    const QString correct;
+    const QString answer;
+
+};
+
+//================================================================
 class ClozeContent : public CardContent
 {
     Q_OBJECT
@@ -43,8 +56,10 @@ public:
     explicit ClozeContent(Card* card, QWidget* parent=nullptr);
     void flip() override;
 private:
-    std::vector<QLabel*> targetLabels;
-    std::vector<QLabel*> nativeLabels;
+    QVBoxLayout* layout;
+    QLabel* nativeLabel;
+    QLabel* clozeTarget;
+    QString fullTarget;
     QLineEdit* clozeBox;
 };
 //==========================================================
