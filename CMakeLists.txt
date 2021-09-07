@@ -29,9 +29,6 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 # ensure network stuff gets included
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
 
-#make sure the pybind headers are accessible
-add_subdirectory(extern/pybind11)
-
 set(CMAKE_AUTORCC ON)
 
 set(PROJECT_SOURCES
@@ -65,12 +62,9 @@ set(PROJECT_SOURCES
     phraseinputform.ui
     stlutility.cpp
     stlutility.h
-    pythonttsengine.h
-    pythonttsengine.cpp
     deckmanagerwidget.h
     deckmanagerwidget.cpp
     deckmanagerwidget.ui
-    python_resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -92,7 +86,6 @@ endif()
 
 target_link_libraries(Codex PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-target_link_libraries(Codex PRIVATE pybind11::embed)
 
 target_link_libraries(Codex  PRIVATE Qt${QT_VERSION_MAJOR}::Network)
 
