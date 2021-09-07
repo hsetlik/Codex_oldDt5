@@ -198,6 +198,7 @@ CardWidget::CardWidget(Deck* deck, QWidget *parent) :
     auto a3 = viewer->getCurrent()->daysForAnswer(3);
     setButtonDayValues(a1, a2, a3);
     setButtonsVisible(false);
+    viewer->currentContent->setFocus(Qt::ActiveWindowFocusReason);
     updateIndexLabel();
 }
 
@@ -205,12 +206,20 @@ void CardWidget::nextCard()
 {
     ++cardIdx;
     viewer->nextCard();
+    viewer->currentContent->setFocus(Qt::ActiveWindowFocusReason);
     updateIndexLabel();
     auto a1 = viewer->getCurrent()->daysForAnswer(1);
     auto a2 = viewer->getCurrent()->daysForAnswer(2);
     auto a3 = viewer->getCurrent()->daysForAnswer(3);
     setButtonDayValues(a1, a2, a3);
     setButtonsVisible(false);
+    auto fWidget = focusWidget();
+    if(dynamic_cast<CardViewer*>(fWidget))
+        printf("Viewer in focus\n");
+    else if(dynamic_cast<CardContent*>(fWidget))
+        printf("Content in focus\n");
+    else if(fWidget == this)
+        printf("Card widget in focus\n");
 }
 CardWidget::~CardWidget()
 {
