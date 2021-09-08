@@ -168,6 +168,7 @@ class Deck
 {
 public:
     Deck(QString name = "default_deck");
+    Deck(QJsonObject obj);
     ~Deck();
     void addPhrasePairFrom(QJsonObject obj);
     std::vector<PhrasePairCards> phrasePairs;
@@ -184,12 +185,11 @@ public:
     QLocale getTargetLocale() {return targetLocale; }
     void exportDeck(QDir& dir, QString newName, bool keepHistory);
     void setName(QString str) {deckName = str; }
+    QJsonObject getDeckAsObject();
 private:
     QString deckName;
-    QJsonObject getDeckAsObject();
     QJsonArray getPairJsons();
     QLocale nativeLocale;
     QLocale targetLocale;
-
 };
 #endif // CARDSTRUCTURE_H

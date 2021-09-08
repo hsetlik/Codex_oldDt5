@@ -2,9 +2,9 @@
 #include <memory>
 
 //parameters for the SM-2 algorithm. Tweaked since Codex uses fewer answer rating options than the original Super Memo
-#define SM2A 0.25f  //orig 0.1f
-#define SM2B 0.06f //orig 0.08f
-#define SM2C 0.04f //orig 0.02f
+#define SM2A 0.1f  //orig 0.1f
+#define SM2B 0.08f //orig 0.08f
+#define SM2C 0.02f //orig 0.02f
 //===================================================================
 //Implements the SuperMemo SM-2 spaced repitition algorithm described here: https://en.wikipedia.org/wiki/SuperMemo#Algorithms
 void Card::updateWithAnswer(int answer)
@@ -202,14 +202,12 @@ PhrasePairCards::PhrasePairCards(QJsonObject& obj) :
     auto ntaArray = obj["NtaCards"].toArray();
     for(int i = 0; i < ntaArray.size(); ++i)
     {
-        //printf("Adding Nta Card\n");
         auto ntaObject = ntaArray[i].toObject();
         ntaCards.push_back(std::make_unique<NtaCard>(ntaObject));
     }
     auto clozeArray = obj["ClozeCards"].toArray();
     for(int i = 0; i < clozeArray.size(); ++i)
     {
-        //printf("adding cloze card\n");
         auto clozeObject = clozeArray.at(i).toObject();
         clozeCards.push_back(std::make_unique<ClozeCard>(clozeObject));
 
@@ -323,6 +321,22 @@ Deck::Deck(QString name) :
         addPhrasePairFrom(pairObj);
     }
     loadFile.close();
+}
+
+Deck::Deck(QJsonObject obj) :
+    deckName(obj["DeckName"].toString())
+{
+    auto iNativeLocale = obj["NativeLocale"].toInt();
+    nativeLocale = QLocale((QLocale::Language) iNativeLocale);
+    auto iTargetLocale = obj["TargetLocale"].toInt();
+    targetLocale = QLocale((QLocale::Language) iTargetLocale);
+    auto pairArray = obj["PhrasePairs"].toArray();
+    printf("%d pairs found\n", pairArray.size());
+    for(int i = 0; i < pairArray.size(); ++i)
+    {
+        auto pairObj = pairArray[i].toObject();
+        addPhrasePairFrom(pairObj);
+    }
 }
 Deck::~Deck()
 {

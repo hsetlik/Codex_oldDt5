@@ -83,8 +83,8 @@ ClozeContent::ClozeContent(Card* _card, QWidget* parent) :
     clozeTarget = new QLabel(clozeStr, this);
     nativeLabel = new QLabel(fullNative, this);
     clozeBox = new QLineEdit(this);
-    layout->addWidget(clozeTarget);
     layout->addWidget(nativeLabel);
+    layout->addWidget(clozeTarget);
     layout->addWidget(clozeBox);
 
     setLayout(layout);
@@ -92,7 +92,12 @@ ClozeContent::ClozeContent(Card* _card, QWidget* parent) :
 }
 void ClozeContent::flip()
 {
-
+    auto inputLabel = new QLabel(clozeBox->text(), this);
+    layout->removeWidget(nativeLabel);
+    delete nativeLabel;
+    layout->removeWidget(clozeBox);
+    delete clozeBox;
+    layout->addWidget(inputLabel);
 }
 //===========================================================================
 FullContent::FullContent(Card* card, QWidget* parent) :
@@ -240,12 +245,12 @@ void CardWidget::on_button2_clicked()
 }
 void CardWidget::on_button3_clicked()
 {
-    viewer->currentContent->linkedCard->updateWithAnswer(2);
+    viewer->currentContent->linkedCard->updateWithAnswer(3);
     nextCard();
 }
 void CardWidget::on_button4_clicked()
 {
-    viewer->currentContent->linkedCard->updateWithAnswer(3);
+    viewer->currentContent->linkedCard->updateWithAnswer(6);
     nextCard();
 }
 void CardWidget::setButtonsVisible(bool shouldBeVisible)
