@@ -31,6 +31,7 @@ private Q_SLOTS:
 
 private:
     QChart* easeCurveForCurrentDeck();
+    QChart* additionHistory();
     Ui::DeckStatsWidget *ui;
     DeckStatsManager manager;
     int totalCards;

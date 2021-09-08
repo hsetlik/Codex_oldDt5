@@ -85,6 +85,7 @@ struct Card
     }
     int getTimesAnswered() {return timesAnswered; }
     int getLastAnswer() {return lastAnswer; }
+    QDateTime createdOn() {return dateCreated;}
     double getEase() {return easeLevel; }
     void resetEase() {easeLevel = 2.5f; }
     void resetTimesAnswered() {timesAnswered = 0; }
@@ -196,11 +197,13 @@ public:
     QLocale getTargetLocale() {return targetLocale; }
     void exportDeck(QDir& dir, QString newName, bool keepHistory);
     void setName(QString str) {deckName = str; }
+    QDateTime createdOn() {return dateCreated; }
     QJsonObject getDeckAsObject();
 private:
     QString deckName;
     QJsonArray getPairJsons();
     QLocale nativeLocale;
     QLocale targetLocale;
+    QDateTime dateCreated;
 };
 #endif // CARDSTRUCTURE_H

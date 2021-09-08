@@ -51,12 +51,30 @@ void DeckStatsManager::saveToFile()
 std::vector<float> DeckStatsManager::latestCardEases()
 {
     std::vector<float> eases;
-    auto tDeck = new Deck(deckName);
-    for (auto & card : tDeck->allCards)
+    for (auto & card : currentDeck->allCards)
     {
         float ease = (float)card->getEase();
         eases.push_back(ease);
     }
-    delete tDeck;
     return eases;
+}
+
+std::map<QDate, int> DeckStatsManager::getAdditionHistory()
+{
+    //map of all the relevant dates
+    std::map<QDate, int> map;
+    QDate current = QDate::currentDate();
+    QDate finish = currentDeck->createdOn().date();
+    while(current > finish)
+    {
+        map[current] = 0;
+        current = current.addDays(-1);
+    }
+    //check when each card was added and increment the correct date
+    for (auto& card : currentDeck->allCards)
+    {
+        auto date = card->createdOn().date();
+        map[date] += 1;
+    }
+    return map;
 }

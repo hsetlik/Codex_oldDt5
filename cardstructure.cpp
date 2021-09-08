@@ -323,6 +323,16 @@ Deck::Deck(QString name) :
         auto pairObj = pairArray[i].toObject();
         addPhrasePairFrom(pairObj);
     }
+    if(masterObject.contains("DeckCreatedDate"))
+    {
+        auto createdStr = masterObject["DeckCreatedDate"].toString();
+        dateCreated = QDateTime::fromString(createdStr);
+    }
+    else
+    {
+        dateCreated = QDateTime::currentDateTime();
+
+    }
     loadFile.close();
 }
 
@@ -340,6 +350,8 @@ Deck::Deck(QJsonObject obj) :
         auto pairObj = pairArray[i].toObject();
         addPhrasePairFrom(pairObj);
     }
+    auto createdStr = obj["DeckCreatedDate"].toString();
+    dateCreated = QDateTime::fromString(createdStr);
 }
 Deck::~Deck()
 {
@@ -394,7 +406,8 @@ QJsonObject Deck::getDeckAsObject()
         {"DeckName", deckName},
         {"NativeLocale", (int)nativeLocale.language()},
         {"TargetLocale", (int)targetLocale.language()},
-        {"PhrasePairs", getPairJsons()}
+        {"PhrasePairs", getPairJsons()},
+        {"DeckCreatedDate", dateCreated.toString()}
     };
     return obj;
 }
