@@ -14,7 +14,7 @@ DeckStatsManager::DeckStatsManager(QString name) :
          QJsonDocument doc(QJsonDocument::fromJson(byteData));
          snapshots = doc.array();
     }
-
+    currentDeck = new Deck(deckName);
 }
 
 DeckStatsManager::~DeckStatsManager()
@@ -51,6 +51,12 @@ void DeckStatsManager::saveToFile()
 std::vector<float> DeckStatsManager::latestCardEases()
 {
     std::vector<float> eases;
-    //TODO
+    auto tDeck = new Deck(deckName);
+    for (auto & card : tDeck->allCards)
+    {
+        float ease = (float)card->getEase();
+        eases.push_back(ease);
+    }
+    delete tDeck;
     return eases;
 }

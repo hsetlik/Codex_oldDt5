@@ -2,11 +2,20 @@
 #define DECKSTATSWIDGET_H
 
 #include <QWidget>
+#include <QtCharts/QChartGlobal>
 #include "deckstatsmanager.h"
 
-namespace Ui {
+namespace Ui
+{
 class DeckStatsWidget;
 }
+
+QT_CHARTS_BEGIN_NAMESPACE
+class QChartView;
+class QChart;
+QT_CHARTS_END_NAMESPACE
+
+QT_CHARTS_USE_NAMESPACE
 
 class DeckStatsWidget : public QWidget
 {
@@ -21,8 +30,10 @@ private Q_SLOTS:
     void on_backButton_clicked();
 
 private:
+    QChart* easeCurveForCurrentDeck();
     Ui::DeckStatsWidget *ui;
     DeckStatsManager manager;
+    int totalCards;
 };
 
 #endif // DECKSTATSWIDGET_H

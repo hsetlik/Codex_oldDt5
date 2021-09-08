@@ -13,6 +13,7 @@ public:
     void saveToFile();
     std::vector<float> latestCardEases();
 private:
+    Deck* currentDeck;
     QJsonArray snapshots;
 };
 

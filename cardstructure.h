@@ -76,6 +76,7 @@ struct Card
     }
     int getTimesAnswered() {return timesAnswered; }
     int getLastAnswer() {return lastAnswer; }
+    double getEase() {return easeLevel; }
     void resetEase() {easeLevel = 2.5f; }
     void resetTimesAnswered() {timesAnswered = 0; }
 protected:
