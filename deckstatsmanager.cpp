@@ -24,10 +24,11 @@ DeckStatsManager::~DeckStatsManager()
 
 void DeckStatsManager::addSnapshot(Deck* sourceDeck)
 {
-    snapshots.append(getSnapshot(sourceDeck));
+    auto shot = getSnapshot(sourceDeck);
+    snapshots.append(shot);
 }
 
-QJsonObject DeckStatsManager::getSnapshot(Deck* src)
+QJsonObject DeckStatsManager::getSnapshot(Deck* const src)
 {
     QJsonObject obj;
     obj["Date"] = QDateTime::currentDateTime().toString();
@@ -37,7 +38,7 @@ QJsonObject DeckStatsManager::getSnapshot(Deck* src)
 
 void DeckStatsManager::saveToFile()
 {
-    auto sDeckFile = "deck_stats/" + deckName + ".json";
+    auto sDeckFile = "deck_stats/" + deckName + "_stats.json";
     QString deckFileName = sDeckFile;
     QFile loadFile(deckFileName);
     if(!loadFile.open(QIODevice::ReadWrite | QIODevice::Truncate))
@@ -77,5 +78,17 @@ std::map<QDate, int> DeckStatsManager::getAdditionHistory()
         map[date] += 1;
     }
     return map;
+}
+
+void DeckStatsManager::addSnapshot(Deck* sourceDeck, QString name)
+{
+    auto manager = new DeckStatsManager(name);
+    manager->addSnapshot(sourceDeck);
+    delete manager;
+}
+
+std::map<QDate, int> DeckStatsManager::totalCardsTime()
+{
+
 }
 

@@ -9,10 +9,12 @@ public:
     ~DeckStatsManager();
     const QString deckName;
     void addSnapshot(Deck* sourceDeck);
-    static QJsonObject getSnapshot(Deck* src);
+    static void addSnapshot(Deck* sourceDeck, QString name);
+    QJsonObject getSnapshot(Deck* const src);
     void saveToFile();
     std::vector<float> latestCardEases();
     std::map<QDate, int> getAdditionHistory();
+    std::map<QDate, int> totalCardsTime();
 private:
     Deck* currentDeck;
     QJsonArray snapshots;

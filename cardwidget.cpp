@@ -1,5 +1,6 @@
 #include "cardwidget.h"
 #include "ui_cardwidget.h"
+#include "deckstatsmanager.h"
 
 CardContent::CardContent(Card* c, QWidget* parent) :
     QWidget(parent),
@@ -159,7 +160,8 @@ void CardViewer::repeatCard()
 }
 void CardViewer::flip()
 {
-    currentContent->flip();
+    if(currentContent)
+        currentContent->flip();
     Q_EMIT cardFlipped();
 }
 void CardViewer::addContentForCard(Card* card)
@@ -267,6 +269,8 @@ void CardWidget::submitCard()
 }
 void CardWidget::finishStudying()
 {
+    auto dName = linkedDeck->getName();
+    DeckStatsManager::addSnapshot(linkedDeck, dName);
     Q_EMIT dueCardsFinished();
 }
 void CardWidget::setButtonDayValues(int l1, int l2, int l3)
