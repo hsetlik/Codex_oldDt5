@@ -164,6 +164,26 @@ private:
     QString fullTarget;
 };
 //================================================================================
+//struct to keep track of card additions over time
+struct AdditionEvent
+{
+    QDateTime timeAdded;
+    int numCards;
+    AdditionEvent(int n, QDateTime t = QDateTime::currentDateTime()) : timeAdded(t), numCards(n) {}
+    AdditionEvent(QJsonObject obj)
+    {
+        auto qDateString = obj["Date"].toString();
+        timeAdded = QDateTime::fromString(qDateString);
+        numCards = obj["Num Cards"].toInt();
+    }
+    QJsonObject toJson()
+    {
+        QJsonObject obj;
+        obj["Date"] = timeAdded.toString();
+        obj["Num Cards"] = numCards;
+        return obj;
+    }
+};
 //Full deck data structure, includes functionality for storing as file JSON
 class Deck
 {
@@ -187,10 +207,12 @@ public:
     void exportDeck(QDir& dir, QString newName, bool keepHistory);
     void setName(QString str) {deckName = str; }
     QJsonObject getDeckAsObject();
+    QJsonArray getAdditionsArray();
 private:
     QString deckName;
     QJsonArray getPairJsons();
     QLocale nativeLocale;
     QLocale targetLocale;
+    std::vector<AdditionEvent> addEvents;
 };
 #endif // CARDSTRUCTURE_H

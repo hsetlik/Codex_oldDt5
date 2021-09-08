@@ -320,6 +320,15 @@ Deck::Deck(QString name) :
         auto pairObj = pairArray[i].toObject();
         addPhrasePairFrom(pairObj);
     }
+    if(masterObject.contains("AdditionHistory"))
+    {
+         auto addArray = masterObject["AdditionHistory"].toArray();
+         for(int i = 0; i < addArray.size(); ++i)
+         {
+             auto eventObj = addArray[i].toObject();
+             addEvents.push_back(AdditionEvent(eventObj));
+         }
+    }
     loadFile.close();
 }
 
@@ -391,6 +400,7 @@ QJsonObject Deck::getDeckAsObject()
         {"DeckName", deckName},
         {"NativeLocale", (int)nativeLocale.language()},
         {"TargetLocale", (int)targetLocale.language()},
+        {"AdditionHistory", getAdditionsArray()},
         {"PhrasePairs", getPairJsons()}
     };
     return obj;
@@ -407,11 +417,16 @@ QJsonArray Deck::getPairJsons()
 }
 void Deck::addNewPairs(QJsonArray newPairs)
 {
+    int startCount = allCards.size();
     for(int i = 0; i < newPairs.size(); ++i)
     {
         auto pairObj = newPairs[i].toObject();
         addPhrasePairFrom(pairObj);
     }
+    int endCount = allCards.size();
+    int numAdded = endCount - startCount;
+    AdditionEvent event(numAdded);
+    addEvents.push_back(event);
 }
 void Deck::pushBackDueDates(int numDays)
 {
@@ -454,4 +469,14 @@ void Deck::exportDeck(QDir& dir, QString newName, bool keepHistory)
     printf("%lld bytes exported to file\n", bytesWritten);
     loadFile.close();
     delete tempDeck;
+}
+
+QJsonArray Deck::getAdditionsArray()
+{
+    QJsonArray arr;
+    for(auto& event : addEvents)
+    {
+        arr.append(event.toJson());
+    }
+    return arr;
 }
