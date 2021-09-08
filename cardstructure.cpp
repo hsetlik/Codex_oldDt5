@@ -137,7 +137,8 @@ QJsonObject NtaCard::getJson()
         {"TimesAnswered", timesAnswered},
         {"LastAnswer", lastAnswer},
         {"EaseLevel", easeLevel},
-        {"IntervalDays", intervalDays}
+        {"IntervalDays", intervalDays},
+        {"DateCreated", dateCreated.toString()}
     };
     return obj;
 }
@@ -153,7 +154,8 @@ QJsonObject ClozeCard::getJson()
         {"TimesAnswered", timesAnswered},
         {"LastAnswer", lastAnswer},
         {"EaseLevel", easeLevel},
-        {"IntervalDays", intervalDays}
+        {"IntervalDays", intervalDays},
+        {"DateCreated", dateCreated.toString()}
     };
     return obj;
 }
@@ -169,7 +171,8 @@ QJsonObject FullCard::getJson()
         {"TimesAnswered", timesAnswered},
         {"LastAnswer", lastAnswer},
         {"EaseLevel", easeLevel},
-        {"IntervalDays", intervalDays}
+        {"IntervalDays", intervalDays},
+        {"DateCreated", dateCreated.toString()}
     };
     return obj;
 }

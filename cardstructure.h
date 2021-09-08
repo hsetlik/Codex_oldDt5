@@ -25,6 +25,7 @@ struct Card
         easeLevel(2.5f),
         intervalDays(1)
     {
+        dateCreated = QDateTime::currentDateTime();
         dateNextDue = QDateTime::currentDateTime();
         parentPairId = pair->getJsonIdString();
     }
@@ -37,6 +38,14 @@ struct Card
         lastAnswer = obj["LastAnswer"].toInt();
         easeLevel = obj["EaseLevel"].toDouble();
         intervalDays = obj["IntervalDays"].toInt();
+        if(obj.contains("DateCreated"))
+        {
+            auto createdString = obj["DateCreated"].toString();
+            dateCreated = QDateTime::fromString(createdString);
+        }
+        else
+            dateCreated = QDateTime::currentDateTime();
+
     }
     static CardType getCardType(QJsonObject& obj)
     {
@@ -80,6 +89,7 @@ struct Card
     void resetEase() {easeLevel = 2.5f; }
     void resetTimesAnswered() {timesAnswered = 0; }
 protected:
+    QDateTime dateCreated;
     QDateTime dateNextDue;
     QString parentPairId;
     int timesAnswered;
