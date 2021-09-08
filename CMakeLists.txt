@@ -67,6 +67,9 @@ set(PROJECT_SOURCES
     deckmanagerwidget.ui
     deckstatsmanager.h
     deckstatsmanager.cpp
+    deckstatswidget.h
+    deckstatswidget.cpp
+    deckstatswidget.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

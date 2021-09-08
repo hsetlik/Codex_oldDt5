@@ -17,6 +17,11 @@ DeckStatsManager::DeckStatsManager(QString name) :
 
 }
 
+DeckStatsManager::~DeckStatsManager()
+{
+    saveToFile();
+}
+
 void DeckStatsManager::addSnapshot(Deck* sourceDeck)
 {
     snapshots.append(getSnapshot(sourceDeck));
@@ -34,7 +39,6 @@ void DeckStatsManager::saveToFile()
 {
     auto sDeckFile = "deck_stats/" + deckName + ".json";
     QString deckFileName = sDeckFile;
-    //2. load file into ByteArray and by extension JSON
     QFile loadFile(deckFileName);
     if(!loadFile.open(QIODevice::ReadWrite | QIODevice::Truncate))
         printf("File not loaded\n");
@@ -42,4 +46,11 @@ void DeckStatsManager::saveToFile()
     auto bytesWritten = loadFile.write(deckJsonDoc.toJson());
     printf("%lld bytes written to file\n", bytesWritten);
     loadFile.close();
+}
+
+std::vector<float> DeckStatsManager::latestCardEases()
+{
+    std::vector<float> eases;
+    //TODO
+    return eases;
 }

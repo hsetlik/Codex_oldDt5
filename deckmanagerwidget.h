@@ -35,6 +35,7 @@ public:
     ~DeckManagerWidget();
 Q_SIGNALS:
     void exitDeckManager();
+    void createStatsScreen(QString name);
 private Q_SLOTS:
     void createExportDialog(QString name);
     void openStatsWidget(QString name);

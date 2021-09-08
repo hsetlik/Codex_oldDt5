@@ -6,10 +6,12 @@ class DeckStatsManager
 {
 public:
     DeckStatsManager(QString name);
+    ~DeckStatsManager();
     const QString deckName;
     void addSnapshot(Deck* sourceDeck);
     static QJsonObject getSnapshot(Deck* src);
     void saveToFile();
+    std::vector<float> latestCardEases();
 private:
     QJsonArray snapshots;
 };

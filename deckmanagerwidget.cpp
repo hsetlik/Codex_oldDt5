@@ -89,7 +89,7 @@ void DeckManagerWidget::createExportDialog(QString name)
 }
 void DeckManagerWidget::openStatsWidget(QString name)
 {
-
+    Q_EMIT createStatsScreen(name);
 }
 
 void DeckManagerWidget::chooseFolder()

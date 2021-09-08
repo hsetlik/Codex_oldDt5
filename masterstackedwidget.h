@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QStackedWidget>
 #include "deckmanagerwidget.h"
+#include "deckstatswidget.h"
 
 class MasterStackedWidget : public QStackedWidget
 {
@@ -38,9 +39,11 @@ private Q_SLOTS:
     void switchToDeckManager();
     void switchToDeckList();
     void createNewDeck(QLocale native, QLocale target, QString name);
+    void exitStatScreen();
 public Q_SLOTS:
     void finishAddingCards(QJsonArray pairs);
     void openDeckWithName(QString name);
+    void statScreenWithName(QString name);
 private:
     std::unique_ptr<Deck> currentDeck;
     DeckListWidget* deckMenuScreen;
@@ -50,6 +53,7 @@ private:
     CardWidget* studyScreen;
     PhraseInputForm* phraseScreen;
     InputWidget* editorScreen;
+    DeckStatsWidget* statScreen;
 Q_SIGNALS:
 
 };

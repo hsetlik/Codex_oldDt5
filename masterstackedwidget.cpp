@@ -97,6 +97,15 @@ void MasterStackedWidget::createNewDeck(QLocale native, QLocale target, QString 
     connect(deckMenuScreen, &DeckListWidget::launchDeckManager, this, &MasterStackedWidget::switchToDeckManager);
 }
 
+void MasterStackedWidget::statScreenWithName(QString name)
+{
+    statScreen = new DeckStatsWidget(name, this);
+    addWidget(statScreen);
+    setCurrentWidget(statScreen);
+    //connect the stat screen's exit signal to a slot on this component
+    connect(statScreen, &DeckStatsWidget::exitToManager, this, &MasterStackedWidget::exitStatScreen);
+}
+
 void MasterStackedWidget::switchToDeckList()
 {
     if(currentDeck != nullptr)
@@ -111,4 +120,12 @@ void MasterStackedWidget::switchToDeckManager()
     addWidget(deckManager);
     setCurrentWidget(deckManager);
     connect(deckManager, &DeckManagerWidget::exitDeckManager, this, &MasterStackedWidget::switchToDeckList);
+    connect(deckManager, &DeckManagerWidget::createStatsScreen, this, &MasterStackedWidget::statScreenWithName);
+}
+
+void MasterStackedWidget::exitStatScreen()
+{
+    setCurrentWidget(deckManager);
+    removeWidget(statScreen);
+    delete statScreen;
 }
