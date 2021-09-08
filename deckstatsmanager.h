@@ -12,6 +12,7 @@ public:
     static QJsonObject getSnapshot(Deck* src);
     void saveToFile();
     std::vector<float> latestCardEases();
+    std::map<QDate, int> getAdditionHistory();
 private:
     Deck* currentDeck;
     QJsonArray snapshots;

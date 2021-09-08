@@ -137,7 +137,8 @@ QJsonObject NtaCard::getJson()
         {"TimesAnswered", timesAnswered},
         {"LastAnswer", lastAnswer},
         {"EaseLevel", easeLevel},
-        {"IntervalDays", intervalDays}
+        {"IntervalDays", intervalDays},
+        {"DateCreated", dateCreated.toString()}
     };
     return obj;
 }
@@ -153,7 +154,8 @@ QJsonObject ClozeCard::getJson()
         {"TimesAnswered", timesAnswered},
         {"LastAnswer", lastAnswer},
         {"EaseLevel", easeLevel},
-        {"IntervalDays", intervalDays}
+        {"IntervalDays", intervalDays},
+        {"DateCreated", dateCreated.toString()}
     };
     return obj;
 }
@@ -169,7 +171,8 @@ QJsonObject FullCard::getJson()
         {"TimesAnswered", timesAnswered},
         {"LastAnswer", lastAnswer},
         {"EaseLevel", easeLevel},
-        {"IntervalDays", intervalDays}
+        {"IntervalDays", intervalDays},
+        {"DateCreated", dateCreated.toString()}
     };
     return obj;
 }
@@ -320,14 +323,15 @@ Deck::Deck(QString name) :
         auto pairObj = pairArray[i].toObject();
         addPhrasePairFrom(pairObj);
     }
-    if(masterObject.contains("AdditionHistory"))
+
+    if(masterObject.contains("DeckCreatedDate"))
     {
-         auto addArray = masterObject["AdditionHistory"].toArray();
-         for(int i = 0; i < addArray.size(); ++i)
-         {
-             auto eventObj = addArray[i].toObject();
-             addEvents.push_back(AdditionEvent(eventObj));
-         }
+        auto createdStr = masterObject["DeckCreatedDate"].toString();
+        dateCreated = QDateTime::fromString(createdStr);
+    }
+    else
+    {
+        dateCreated = QDateTime::currentDateTime();
     }
     loadFile.close();
 }
@@ -346,6 +350,8 @@ Deck::Deck(QJsonObject obj) :
         auto pairObj = pairArray[i].toObject();
         addPhrasePairFrom(pairObj);
     }
+    auto createdStr = obj["DeckCreatedDate"].toString();
+    dateCreated = QDateTime::fromString(createdStr);
 }
 Deck::~Deck()
 {
@@ -400,8 +406,8 @@ QJsonObject Deck::getDeckAsObject()
         {"DeckName", deckName},
         {"NativeLocale", (int)nativeLocale.language()},
         {"TargetLocale", (int)targetLocale.language()},
-        {"AdditionHistory", getAdditionsArray()},
-        {"PhrasePairs", getPairJsons()}
+        {"PhrasePairs", getPairJsons()},
+        {"DeckCreatedDate", dateCreated.toString()}
     };
     return obj;
 }
@@ -417,16 +423,11 @@ QJsonArray Deck::getPairJsons()
 }
 void Deck::addNewPairs(QJsonArray newPairs)
 {
-    int startCount = allCards.size();
     for(int i = 0; i < newPairs.size(); ++i)
     {
         auto pairObj = newPairs[i].toObject();
         addPhrasePairFrom(pairObj);
     }
-    int endCount = allCards.size();
-    int numAdded = endCount - startCount;
-    AdditionEvent event(numAdded);
-    addEvents.push_back(event);
 }
 void Deck::pushBackDueDates(int numDays)
 {
@@ -458,9 +459,7 @@ void Deck::exportDeck(QDir& dir, QString newName, bool keepHistory)
         tempDeck->resetEaseFactors();
         tempDeck->pushBackDueDates(0);
     }
-
     auto fullPath = dir.filePath(newName + ".json");
-
     QFile loadFile(fullPath);
     if(!loadFile.open(QIODevice::ReadWrite))
         printf("File not loaded\n");
@@ -469,14 +468,4 @@ void Deck::exportDeck(QDir& dir, QString newName, bool keepHistory)
     printf("%lld bytes exported to file\n", bytesWritten);
     loadFile.close();
     delete tempDeck;
-}
-
-QJsonArray Deck::getAdditionsArray()
-{
-    QJsonArray arr;
-    for(auto& event : addEvents)
-    {
-        arr.append(event.toJson());
-    }
-    return arr;
 }

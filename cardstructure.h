@@ -25,6 +25,7 @@ struct Card
         easeLevel(2.5f),
         intervalDays(1)
     {
+        dateCreated = QDateTime::currentDateTime();
         dateNextDue = QDateTime::currentDateTime();
         parentPairId = pair->getJsonIdString();
     }
@@ -37,6 +38,14 @@ struct Card
         lastAnswer = obj["LastAnswer"].toInt();
         easeLevel = obj["EaseLevel"].toDouble();
         intervalDays = obj["IntervalDays"].toInt();
+        if(obj.contains("DateCreated"))
+        {
+            auto createdString = obj["DateCreated"].toString();
+            dateCreated = QDateTime::fromString(createdString);
+        }
+        else
+            dateCreated = QDateTime::currentDateTime();
+
     }
     static CardType getCardType(QJsonObject& obj)
     {
@@ -76,10 +85,12 @@ struct Card
     }
     int getTimesAnswered() {return timesAnswered; }
     int getLastAnswer() {return lastAnswer; }
+    QDateTime createdOn() {return dateCreated;}
     double getEase() {return easeLevel; }
     void resetEase() {easeLevel = 2.5f; }
     void resetTimesAnswered() {timesAnswered = 0; }
 protected:
+    QDateTime dateCreated;
     QDateTime dateNextDue;
     QString parentPairId;
     int timesAnswered;
@@ -164,26 +175,6 @@ private:
     QString fullTarget;
 };
 //================================================================================
-//struct to keep track of card additions over time
-struct AdditionEvent
-{
-    QDateTime timeAdded;
-    int numCards;
-    AdditionEvent(int n, QDateTime t = QDateTime::currentDateTime()) : timeAdded(t), numCards(n) {}
-    AdditionEvent(QJsonObject obj)
-    {
-        auto qDateString = obj["Date"].toString();
-        timeAdded = QDateTime::fromString(qDateString);
-        numCards = obj["Num Cards"].toInt();
-    }
-    QJsonObject toJson()
-    {
-        QJsonObject obj;
-        obj["Date"] = timeAdded.toString();
-        obj["Num Cards"] = numCards;
-        return obj;
-    }
-};
 //Full deck data structure, includes functionality for storing as file JSON
 class Deck
 {
@@ -206,6 +197,7 @@ public:
     QLocale getTargetLocale() {return targetLocale; }
     void exportDeck(QDir& dir, QString newName, bool keepHistory);
     void setName(QString str) {deckName = str; }
+    QDateTime createdOn() {return dateCreated; }
     QJsonObject getDeckAsObject();
     QJsonArray getAdditionsArray();
 private:
@@ -213,6 +205,6 @@ private:
     QJsonArray getPairJsons();
     QLocale nativeLocale;
     QLocale targetLocale;
-    std::vector<AdditionEvent> addEvents;
+    QDateTime dateCreated;
 };
 #endif // CARDSTRUCTURE_H

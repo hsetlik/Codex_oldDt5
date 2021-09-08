@@ -37,6 +37,8 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     ui->nameLabel->setText(lStr);
     auto easeView = new QChartView(easeCurveForCurrentDeck(), this);
     ui->mainLayout->addWidget(easeView);
+    auto addedView = new QChartView(additionHistory(), this);
+    ui->mainLayout->addWidget(addedView);
     QString cardCountStr = "Total Cards: " + QString::number(totalCards);
     auto cardCountLabel = new QLabel(cardCountStr, this);
     ui->mainLayout->addWidget(cardCountLabel);
@@ -84,3 +86,23 @@ QChart* DeckStatsWidget::easeCurveForCurrentDeck()
     return chart;
 }
 
+QChart* DeckStatsWidget::additionHistory()
+{
+    QChart *chart = new QChart();
+    chart->setTitle("Cards Added");
+    auto addMap = manager.getAdditionHistory();
+    QBarSeries* series = new QBarSeries(chart);
+    auto set = new QBarSet("");
+    int maxValue = std::numeric_limits<int>::min();
+    for(auto& date : addMap)
+    {
+        if(date.second > maxValue)
+            maxValue = date.second;
+        *set << date.second;
+    }
+    series->append(set);
+    chart->addSeries(series);
+    chart->createDefaultAxes();
+    chart->axes(Qt::Vertical).first()->setRange(0, maxValue);
+    return chart;
+}
