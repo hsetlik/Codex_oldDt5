@@ -37,6 +37,8 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     ui->nameLabel->setText(lStr);
     auto easeView = new QChartView(easeCurveForCurrentDeck(), this);
     ui->mainLayout->addWidget(easeView);
+    auto additionView = new QChartView(dailyAdditionsInRange(), this);
+    ui->mainLayout->addWidget(additionView);
     QString cardCountStr = "Total Cards: " + QString::number(totalCards);
     auto cardCountLabel = new QLabel(cardCountStr, this);
     ui->mainLayout->addWidget(cardCountLabel);
@@ -81,6 +83,29 @@ QChart* DeckStatsWidget::easeCurveForCurrentDeck()
     chart->createDefaultAxes();
     chart->axes(Qt::Horizontal).first()->setRange(0, xMax - 1);
     chart->axes(Qt::Vertical).first()->setRange(0, yMax);
+    return chart;
+}
+
+QChart* DeckStatsWidget::dailyAdditionsInRange(int numDays)
+{
+    QChart* chart = new QChart();
+    QStackedBarSeries *series = new QStackedBarSeries(chart);
+    auto additionData = manager.getDailyAdditions(numDays);
+    QBarSet *set = new QBarSet("Additions");
+    int maxValue = std::numeric_limits<int>::min();
+    for(auto& day : additionData)
+    {
+        *set << day;
+        if(day > maxValue)
+            maxValue = day;
+    }
+    series->append(set);
+
+    chart->addSeries(series);
+
+    chart->createDefaultAxes();
+    chart->axes(Qt::Vertical).first()->setRange(0, maxValue);
+
     return chart;
 }
 

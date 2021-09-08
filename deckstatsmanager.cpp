@@ -60,3 +60,19 @@ std::vector<float> DeckStatsManager::latestCardEases()
     delete tDeck;
     return eases;
 }
+
+std::vector<int> DeckStatsManager::getDailyAdditions(int range)
+{
+    std::vector<int> cardCounts;
+    auto tDeck = new Deck(deckName);
+    auto today = QDate::currentDate();
+    auto earliest = tDeck->addEvents[0].timeAdded.date();
+    auto startDate = (range == -1) ? earliest : today.addDays(-1 * range);
+    auto numDays = (int)earliest.daysTo(today);
+    for(int i =0; i < numDays; ++i)
+    {
+        auto date = startDate.addDays(i);
+        cardCounts.push_back(tDeck->additionsOnDate(date));
+    }
+    return cardCounts;
+}

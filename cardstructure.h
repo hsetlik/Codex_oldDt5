@@ -208,11 +208,12 @@ public:
     void setName(QString str) {deckName = str; }
     QJsonObject getDeckAsObject();
     QJsonArray getAdditionsArray();
+    std::vector<AdditionEvent> addEvents;
+    int additionsOnDate (QDate& date);
 private:
     QString deckName;
     QJsonArray getPairJsons();
     QLocale nativeLocale;
     QLocale targetLocale;
-    std::vector<AdditionEvent> addEvents;
 };
 #endif // CARDSTRUCTURE_H

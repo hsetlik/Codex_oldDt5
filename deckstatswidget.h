@@ -31,6 +31,7 @@ private Q_SLOTS:
 
 private:
     QChart* easeCurveForCurrentDeck();
+    QChart* dailyAdditionsInRange(int numDays = -1);
     Ui::DeckStatsWidget *ui;
     DeckStatsManager manager;
     int totalCards;

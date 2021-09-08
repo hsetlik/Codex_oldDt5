@@ -480,3 +480,13 @@ QJsonArray Deck::getAdditionsArray()
     }
     return arr;
 }
+
+int Deck::additionsOnDate(QDate &date)
+{
+    for(auto & event : addEvents)
+    {
+        if (event.timeAdded.date() == date)
+            return event.numCards;
+    }
+    return 0;
+}
