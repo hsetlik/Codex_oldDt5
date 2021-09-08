@@ -78,3 +78,4 @@ std::map<QDate, int> DeckStatsManager::getAdditionHistory()
     }
     return map;
 }
+

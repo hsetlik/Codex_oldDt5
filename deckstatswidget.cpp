@@ -85,7 +85,6 @@ QChart* DeckStatsWidget::easeCurveForCurrentDeck()
     chart->axes(Qt::Vertical).first()->setRange(0, yMax);
     return chart;
 }
-
 QChart* DeckStatsWidget::additionHistory()
 {
     QChart *chart = new QChart();
@@ -106,3 +105,4 @@ QChart* DeckStatsWidget::additionHistory()
     chart->axes(Qt::Vertical).first()->setRange(0, maxValue);
     return chart;
 }
+

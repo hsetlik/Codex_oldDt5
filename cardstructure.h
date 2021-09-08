@@ -199,12 +199,13 @@ public:
     void setName(QString str) {deckName = str; }
     QDateTime createdOn() {return dateCreated; }
     QJsonObject getDeckAsObject();
-    QJsonArray getAdditionsArray();
+
 private:
     QString deckName;
     QJsonArray getPairJsons();
     QLocale nativeLocale;
     QLocale targetLocale;
     QDateTime dateCreated;
+
 };
 #endif // CARDSTRUCTURE_H
