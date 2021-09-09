@@ -102,7 +102,51 @@ ClozePhraseWidget::ClozePhraseWidget(Card* card, QWidget* parent) :
 
 void ClozePhraseWidget::paintEvent(QPaintEvent *)
 {
+    QPainter painter(this);
+    if (isFlipped)
+    {
+        auto correct = linkedCard->getBackData();
+        highlight(answerLabel, correct, painter);
+    }
+    else
+    {
+        QColor color(90, 90, 200, 100);
+        if (hiddenLabel)
+        {
+            QBrush brush(color);
+            auto rect = QRect(hiddenLabel->x(), hiddenLabel->y(), hiddenLabel->width(), hiddenLabel->height());
+            painter.fillRect(rect, brush);
+        }
+    }
 
+}
+
+void ClozePhraseWidget::highlight(ClozeLabel *answer, QString correct, QPainter &painter)
+{
+    // step 1: get an array of rectangles for all the letters in the answer label
+    QColor color;
+    std::vector<QRect> letterRects;
+    auto answerStr = answer->text();
+    auto metrics = fontMetrics();
+    int y = answer->y();
+    int x = answer->x();
+    for (int i = 0; i < answerStr.length(); ++i)
+    {
+        auto letterStr = QString(answerStr[i]);
+        auto size = metrics.size(Qt::TextSingleLine, letterStr);
+        QRect letterRect(x, y, size.width(), size.height());
+        x += size.width();
+        if(answerStr[i] == correct[i])
+        {
+            color = QColor(90, 200, 90, 100);
+        }
+        else
+        {
+            color = QColor(200, 90, 90, 100);
+        }
+        QBrush brush(color);
+        painter.fillRect(QRectF(letterRect), brush);
+    }
 }
 
 void ClozePhraseWidget::flip(const QString& answer)
@@ -112,26 +156,16 @@ void ClozePhraseWidget::flip(const QString& answer)
     //create the answer label
     answerLabel = new ClozeLabel(answer, this);
     answerLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    int xMatch = 0;
+    int xMatch = hiddenLabel->x();
     int yBottom = 0;
     for (auto& label : targetLabels)
     {
-        if(label->text() == answer)
-        {
-            xMatch = label->x();
-        }
         if(label->y() + label->height() > yBottom)
             yBottom = label->y() + label->height();
     }
     answerLabel->move(xMatch, yBottom + 2);
     answerLabel->show();
     answerLabel->setAttribute(Qt::WA_DeleteOnClose);
-
-
-
-
-
-
 }
 //===========================================================================
 ClozeContent::ClozeContent(Card* _card, QWidget* parent) :

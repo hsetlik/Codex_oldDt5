@@ -80,7 +80,8 @@ private:
     ClozeLabel* answerLabel;
     bool isFlipped;
     int phraseWidth;
-
+    //function to handle the painting of match highlights
+    void highlight(ClozeLabel* answer, QString correct, QPainter& painter);
 };
 
 //================================================================
