@@ -40,99 +40,122 @@ void NtaContent::flip()
 void ClozeLabel::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    auto cornerSize = (float)frameRect().height() / 5.0f;
-    auto bounds = QRectF(frameRect());
     QPen pen(Qt::black, 1.8f, Qt::SolidLine, Qt::RoundCap, Qt::BevelJoin);
     painter.setPen(pen);
-    auto textCorner = QPointF(cornerSize, cornerSize * 3.3f);
-    painter.drawText(textCorner, text());
+    painter.drawText(QRectF(frameRect()), Qt::AlignLeft, text());
+    /*
+    QBrush brush(background);
+    painter.fillRect(frameRect(), brush);
+    */
+}
+QSize ClozeLabel::sizeHint() const
+{
+    auto metrics = fontMetrics();
+    auto size = metrics.size(Qt::TextSingleLine, text());
+    return size;
 }
 //===========================================================================
 ClozePhraseWidget::ClozePhraseWidget(Card* card, QWidget* parent) :
     QWidget(parent),
     linkedCard(card),
     hiddenLabel(nullptr),
+    answerLabel(nullptr),
     isFlipped(false)
 {
-    targetLayout = new QHBoxLayout;
-    mainLayout = new QVBoxLayout;
-
-    editBox = new QLineEdit;
     auto cCard = dynamic_cast<ClozeCard*>(linkedCard);
     auto fullTarget = cCard->getFullTarget();
-    auto fullNative = cCard->getFullNative();
-    nativeLabel = new QLabel(fullNative, this);
-    mainLayout->addWidget(nativeLabel);
     auto clozeWord = cCard->getBackData();
     //split the target words into a vector to create labels
     auto exp = QRegExp("\\s+");
     auto words = fullTarget.split(exp);
-
+    int fullWidth = 0;
+    int x = 5;
+    int y = 5;
     for(auto& word : words)
     {
-        auto label = new ClozeLabel(word, this);
-        auto cWord = label->text().toStdString().c_str();
-        printf("Word \"%s\" has width %d\n", cWord, label->width());
-        targetLayout->addWidget(label);
-        targetLabels.push_back(label);
+        auto wordLabel = new ClozeLabel(word, this);
+        wordLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+
+        wordLabel->move(x, y);
+        wordLabel->show();
+        wordLabel->setAttribute(Qt::WA_DeleteOnClose);
         if(word == clozeWord)
         {
-            label->setVisible(false);
-            hiddenLabel = label;
+            hiddenLabel = wordLabel;
+            hiddenLabel->setVisible(false);
         }
+        x += wordLabel->sizeHint().width() + 2;
+        if(x > fullWidth)
+            fullWidth = x;
+        if (x > 350)
+        {
+            y += wordLabel->height() + 2;
+            x = 5;
+        }
+        targetLabels.push_back(wordLabel);
     }
-    //wrap targetLayout in a widget put it in the layout
-    auto targetWidget = new QWidget(this);
-    targetWidget->setLayout(targetLayout);
-    //add the target phrase to the main layout
-    mainLayout->addWidget(targetWidget);
-    //figure out width
-    int fullWidth = 0;
-    for(auto & label : targetLabels)
-    {
-        fullWidth += label->width();
-
-    }
-    printf("Total width: %d\n", fullWidth);
-    targetWidget->setMaximumWidth(fullWidth);
-
-    mainLayout->addWidget(editBox);
-
-    setLayout(mainLayout);
+    phraseWidth = fullWidth;
+    printf("Phrase Width: %d\n", phraseWidth);
+    setFixedWidth(phraseWidth);
 
 }
 
-void ClozePhraseWidget::paintEvent(QPaintEvent *event)
+void ClozePhraseWidget::paintEvent(QPaintEvent *)
 {
 
 }
 
-void ClozePhraseWidget::flip()
+void ClozePhraseWidget::flip(const QString& answer)
 {
-    if(hiddenLabel != nullptr)
-        hiddenLabel->setVisible(true);
+    hiddenLabel->setVisible(true);
     isFlipped = true;
-    auto answerStr = editBox->text();
-    answerLabel = new QLabel(answerStr, this);
-    mainLayout->removeWidget(editBox);
-    delete editBox;
-    mainLayout->removeWidget(nativeLabel);
-    delete nativeLabel;
-    mainLayout->addWidget(answerLabel);
+    //create the answer label
+    answerLabel = new ClozeLabel(answer, this);
+    answerLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    int xMatch = 0;
+    int yBottom = 0;
+    for (auto& label : targetLabels)
+    {
+        if(label->text() == answer)
+        {
+            xMatch = label->x();
+        }
+        if(label->y() + label->height() > yBottom)
+            yBottom = label->y() + label->height();
+    }
+    answerLabel->move(xMatch, yBottom + 2);
+    answerLabel->show();
+    answerLabel->setAttribute(Qt::WA_DeleteOnClose);
+
+
+
+
+
 
 }
 //===========================================================================
 ClozeContent::ClozeContent(Card* _card, QWidget* parent) :
     CardContent(_card, parent)
 {
+    mainLayout = new QVBoxLayout;
     phraseWidget = new ClozePhraseWidget(_card, this);
-    auto layout = new QHBoxLayout;
-    layout->addWidget(phraseWidget);
-    setLayout(layout);
+    nativeLabel = new QLabel(dynamic_cast<ClozeCard*>(linkedCard)->getFullNative(), this);
+    editBox = new QLineEdit(this);
+    mainLayout->addWidget(nativeLabel);
+    mainLayout->addWidget(phraseWidget);
+    phraseWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    phraseWidget->setFixedWidth(phraseWidget->getPhraseWidth());
+    mainLayout->addWidget(editBox);
+    setLayout(mainLayout);
 }
 void ClozeContent::flip()
 {
-    phraseWidget->flip();
+    auto answer = editBox->text();
+    phraseWidget->flip(answer);
+    mainLayout->removeWidget(nativeLabel);
+    mainLayout->removeWidget(editBox);
+    delete nativeLabel;
+    delete editBox;
 }
 //===========================================================================
 FullContent::FullContent(Card* card, QWidget* parent) :

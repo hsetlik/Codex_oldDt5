@@ -42,9 +42,27 @@ public:
         QLabel(parent)
     {
         setText(text);
-        setFrameStyle(QFrame::Panel);
+        //setFrameStyle(QFrame::Panel);
+        //get a new background color
+        auto r = std::rand() % 255;
+        auto g = std::rand() % 255;
+        auto b = std::rand() % 255;
+        //leave semi-transparent
+        background = QColor(r, g, b, 100);
+        /*
+        auto rect = frameRect();
+        auto x = rect.x();
+        auto y = rect.y();
+        auto width = sizeHint().width();
+        auto height = sizeHint().height();
+        QRect frame(x, y, width, height);
+        setFrameRect(frame);
+        */
     }
     void paintEvent(QPaintEvent* ) override;
+    QSize sizeHint() const override;
+private:
+    QColor background;
 };
 //================================================================
 struct ClozePhraseWidget : public QWidget
@@ -53,17 +71,16 @@ struct ClozePhraseWidget : public QWidget
 public:
     explicit ClozePhraseWidget(Card* card, QWidget* parent = nullptr);
     void paintEvent(QPaintEvent* event) override;
-    void flip();
+    void flip(const QString& answer);
+    int getPhraseWidth() {return phraseWidth; }
 private:
     Card* const linkedCard;
-    QHBoxLayout* targetLayout;
-    QVBoxLayout* mainLayout;
-    QLabel* nativeLabel;
     std::vector<ClozeLabel*> targetLabels;
-    QLineEdit* editBox;
     ClozeLabel* hiddenLabel;
-    QLabel* answerLabel;
+    ClozeLabel* answerLabel;
     bool isFlipped;
+    int phraseWidth;
+
 };
 
 //================================================================
@@ -76,6 +93,14 @@ public:
     void flip() override;
 private:
     ClozePhraseWidget* phraseWidget;
+    QVBoxLayout* mainLayout;
+    QLabel* nativeLabel;
+    std::vector<ClozeLabel*> targetLabels;
+    QLineEdit* editBox;
+    ClozeLabel* hiddenLabel;
+    QLabel* answerLabel;
+    bool isFlipped;
+
 };
 //==========================================================
 class FullContent : public CardContent
