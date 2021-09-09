@@ -36,69 +36,103 @@ void NtaContent::flip()
 {
     nativeLabel->setVisible(true);
 }
-
-ClozeLabel::ClozeLabel(QString correct_, QString answer_, QWidget* parent) :
-    QLabel(answer, parent),
-    correct(correct_),
-    answer(answer_)
+//===========================================================================
+void ClozeLabel::paintEvent(QPaintEvent *)
 {
-
-}
-void ClozeLabel::paintEvent(QPaintEvent*)
-{
-    const auto matchColor = Qt::yellow;
-    const auto wrongColor = Qt::red;
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
-    /*
-    auto brushColor = (mouseIsOver) ? backgroundColor.lighter(60) : backgroundColor;
-    QBrush brush(brushColor);
     auto cornerSize = (float)frameRect().height() / 5.0f;
     auto bounds = QRectF(frameRect());
-    painter.setBrush(brush);
-    painter.drawRoundedRect(bounds, cornerSize, cornerSize);
-    QPen pen(Qt::white, 1.8f, Qt::SolidLine, Qt::RoundCap, Qt::BevelJoin);
+    QPen pen(Qt::black, 1.8f, Qt::SolidLine, Qt::RoundCap, Qt::BevelJoin);
     painter.setPen(pen);
     auto textCorner = QPointF(cornerSize, cornerSize * 3.3f);
     painter.drawText(textCorner, text());
-    */
-    auto font = painter.font();
-    auto metrics = QFontMetrics(font, this);
-    auto bounds = QRectF(frameRect());
-    QBrush brush(matchColor);
-    QPen pen(Qt::white, 1.8f, Qt::SolidLine, Qt::RoundCap, Qt::BevelJoin);
-    painter.setPen(pen);
-    painter.drawText(0, 0, correct);
+}
+//===========================================================================
+ClozePhraseWidget::ClozePhraseWidget(Card* card, QWidget* parent) :
+    QWidget(parent),
+    linkedCard(card),
+    hiddenLabel(nullptr),
+    isFlipped(false)
+{
+    targetLayout = new QHBoxLayout;
+    mainLayout = new QVBoxLayout;
+
+    editBox = new QLineEdit;
+    auto cCard = dynamic_cast<ClozeCard*>(linkedCard);
+    auto fullTarget = cCard->getFullTarget();
+    auto fullNative = cCard->getFullNative();
+    nativeLabel = new QLabel(fullNative, this);
+    mainLayout->addWidget(nativeLabel);
+    auto clozeWord = cCard->getBackData();
+    //split the target words into a vector to create labels
+    auto exp = QRegExp("\\s+");
+    auto words = fullTarget.split(exp);
+
+    for(auto& word : words)
+    {
+        auto label = new ClozeLabel(word, this);
+        auto cWord = label->text().toStdString().c_str();
+        printf("Word \"%s\" has width %d\n", cWord, label->width());
+        targetLayout->addWidget(label);
+        targetLabels.push_back(label);
+        if(word == clozeWord)
+        {
+            label->setVisible(false);
+            hiddenLabel = label;
+        }
+    }
+    //wrap targetLayout in a widget put it in the layout
+    auto targetWidget = new QWidget(this);
+    targetWidget->setLayout(targetLayout);
+    //add the target phrase to the main layout
+    mainLayout->addWidget(targetWidget);
+    //figure out width
+    int fullWidth = 0;
+    for(auto & label : targetLabels)
+    {
+        fullWidth += label->width();
+
+    }
+    printf("Total width: %d\n", fullWidth);
+    targetWidget->setMaximumWidth(fullWidth);
+
+    mainLayout->addWidget(editBox);
+
+    setLayout(mainLayout);
+
+}
+
+void ClozePhraseWidget::paintEvent(QPaintEvent *event)
+{
+
+}
+
+void ClozePhraseWidget::flip()
+{
+    if(hiddenLabel != nullptr)
+        hiddenLabel->setVisible(true);
+    isFlipped = true;
+    auto answerStr = editBox->text();
+    answerLabel = new QLabel(answerStr, this);
+    mainLayout->removeWidget(editBox);
+    delete editBox;
+    mainLayout->removeWidget(nativeLabel);
+    delete nativeLabel;
+    mainLayout->addWidget(answerLabel);
 
 }
 //===========================================================================
 ClozeContent::ClozeContent(Card* _card, QWidget* parent) :
-    CardContent(_card, parent),
-    clozeBox(nullptr)
+    CardContent(_card, parent)
 {
-    layout = new QVBoxLayout;
-    fullTarget = dynamic_cast<ClozeCard*>(_card)->getFullTarget();
-    auto fullNative = dynamic_cast<ClozeCard*>(_card)->getFullNative();
-    auto clozeStr = linkedCard->getFrontData();
-    clozeTarget = new QLabel(clozeStr, this);
-    nativeLabel = new QLabel(fullNative, this);
-    clozeBox = new QLineEdit(this);
-    layout->addWidget(nativeLabel);
-    layout->addWidget(clozeTarget);
-    layout->addWidget(clozeBox);
-
+    phraseWidget = new ClozePhraseWidget(_card, this);
+    auto layout = new QHBoxLayout;
+    layout->addWidget(phraseWidget);
     setLayout(layout);
-
 }
 void ClozeContent::flip()
 {
-    auto inputLabel = new QLabel(clozeBox->text(), this);
-    layout->removeWidget(nativeLabel);
-    delete nativeLabel;
-    layout->removeWidget(clozeBox);
-    delete clozeBox;
-    layout->addWidget(inputLabel);
+    phraseWidget->flip();
 }
 //===========================================================================
 FullContent::FullContent(Card* card, QWidget* parent) :

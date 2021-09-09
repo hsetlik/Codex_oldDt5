@@ -71,6 +71,8 @@ set(PROJECT_SOURCES
     deckstatswidget.h
     deckstatswidget.cpp
     deckstatswidget.ui
+    codexstyle.h
+    codexstyle.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
