@@ -25,7 +25,31 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtWidgets/QApplication>
 #include <QtCharts/QValueAxis>
+//=================================================================
+SnapshotGraphWidget::SnapshotGraphWidget(DeckStatsManager* m, QWidget* parent) :
+    QWidget(parent),
+    manager(m),
+    currentGraph(nullptr)
+{
+    mainLayout = new QVBoxLayout;
+    setLayout(mainLayout);
+}
+SnapshotGraphWidget::SnapshotGraphWidget(DeckStatsManager* m, const QString& property, QWidget* parent) :
+    QWidget(parent),
+    manager(m),
+    currentGraph(nullptr)
+{
+    mainLayout = new QVBoxLayout;
+    setLayout(mainLayout);
+    setGraphFor(property);
+}
+QChart* SnapshotGraphWidget::createChart(const QString& property)
+{
+    auto chart = new QChart();
 
+    return chart;
+}
+//=================================================================
 DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DeckStatsWidget),
@@ -35,22 +59,22 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     ui->setupUi(this);
     mainLayout = new QVBoxLayout;
     mainWidget = new QWidget(this);
+    mainWidget->setMinimumHeight(800);
     mainWidget->setLayout(mainLayout);
     mainWidget->setFocus(Qt::ActiveWindowFocusReason);
     ui->scrollArea->setWidget(mainWidget);
     ui->scrollArea->setWidgetResizable(true);
     auto lStr = name + " Deck Statistics";
-    auto nameLabel = new QLabel(lStr, this);
-    mainLayout->addWidget(nameLabel);
+    ui->deckNameLabel->setText(lStr);
+
+    QString cardCountStr = "Total Cards: " + QString::number(totalCards);
+    auto cardCountLabel = new QLabel(cardCountStr, this);
+    mainLayout->addWidget(cardCountLabel);
+
     auto easeView = new QChartView(easeCurveForCurrentDeck(), this);
     easeView->setMinimumHeight(easeView->sizeHint().height());
     mainLayout->addWidget(easeView);
-    QString cardCountStr = "Total Cards: " + QString::number(totalCards);
-    for(int i = 0; i < 6; ++i)
-    {
-        auto cardCountLabel = new QLabel(cardCountStr, this);
-        mainLayout->addWidget(cardCountLabel);
-    }
+
     auto addedView = new QChartView(additionHistory(), this);
     addedView->setMinimumHeight(addedView->sizeHint().height());
     mainLayout->addWidget(addedView);
@@ -95,7 +119,7 @@ QChart* DeckStatsWidget::easeCurveForCurrentDeck()
     chart->createDefaultAxes();
     chart->axes(Qt::Horizontal).first()->setRange(0, xMax - 1);
     chart->axes(Qt::Vertical).first()->setRange(0, yMax);
-    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     return chart;
 }
 QChart* DeckStatsWidget::additionHistory()

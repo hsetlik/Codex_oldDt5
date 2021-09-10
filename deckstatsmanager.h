@@ -14,7 +14,7 @@ public:
     void saveToFile();
     std::vector<float> latestCardEases();
     std::map<QDate, int> getAdditionHistory();
-    std::map<QDate, int> totalCardsTime();
+    std::map<QDate, int> snapshotNumCards();
 private:
     Deck* currentDeck;
     QJsonArray snapshots;

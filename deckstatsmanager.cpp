@@ -87,8 +87,18 @@ void DeckStatsManager::addSnapshot(Deck* sourceDeck, QString name)
     delete manager;
 }
 
-std::map<QDate, int> DeckStatsManager::totalCardsTime()
+std::map<QDate, int> DeckStatsManager::snapshotNumCards()
 {
-
+    std::map<QDate, int> valueMap;
+    for(int i = 0; i < snapshots.size(); ++i)
+    {
+        auto obj = snapshots[i].toObject();
+        auto tDeck = new Deck(obj);
+        auto date = QDateTime::fromString(obj["Date"].toString()).date();
+        int count = (int)tDeck->allCards.size();
+        valueMap[date] = count;
+        delete tDeck;
+    }
+    return valueMap;
 }
 

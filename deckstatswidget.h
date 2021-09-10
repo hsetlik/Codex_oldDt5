@@ -17,6 +17,20 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
+class SnapshotGraphWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit SnapshotGraphWidget(DeckStatsManager* m, QWidget* parent = nullptr);
+    SnapshotGraphWidget(DeckStatsManager* m, const QString& property, QWidget* parent = nullptr);
+    DeckStatsManager* const manager;
+    void setGraphFor(const QString& property);
+private:
+    QChart* createChart(const QString& property);
+    QWidget* currentGraph;
+    QVBoxLayout* mainLayout;
+};
+
 class DeckStatsWidget : public QWidget
 {
     Q_OBJECT
