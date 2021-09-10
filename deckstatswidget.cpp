@@ -49,6 +49,11 @@ QChart* SnapshotGraphWidget::createChart(const QString& property)
 
     return chart;
 }
+
+void SnapshotGraphWidget::setGraphFor(const QString &property)
+{
+
+}
 //=================================================================
 DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     QWidget(parent),

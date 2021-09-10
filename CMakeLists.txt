@@ -29,6 +29,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 # ensure network stuff gets included
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Charts REQUIRED)
+find_package(AWSSDK COMPONENTS polly REQUIRED)
+
 
 set(CMAKE_AUTORCC ON)
 
@@ -94,6 +96,7 @@ endif()
 
 target_link_libraries(Codex PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
+#target_link_libraries(Codex PRIVATE  ${AWSSDK_LINK_LIBRARIES})
 
 target_link_libraries(Codex  PRIVATE Qt${QT_VERSION_MAJOR}::Network)
 
