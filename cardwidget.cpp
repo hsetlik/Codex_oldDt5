@@ -74,7 +74,6 @@ ClozePhraseWidget::ClozePhraseWidget(Card* card, QWidget* parent) :
     for(auto& word : words)
     {
         auto wordLabel = new ClozeLabel(word, this);
-        wordLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 
         wordLabel->move(x, y);
         wordLabel->show();
@@ -95,9 +94,6 @@ ClozePhraseWidget::ClozePhraseWidget(Card* card, QWidget* parent) :
         targetLabels.push_back(wordLabel);
     }
     phraseWidth = fullWidth;
-    printf("Phrase Width: %d\n", phraseWidth);
-    setFixedWidth(phraseWidth);
-
 }
 
 void ClozePhraseWidget::paintEvent(QPaintEvent *)
@@ -127,7 +123,7 @@ void ClozePhraseWidget::highlight(ClozeLabel *answer, QString correct, QPainter 
     QColor color;
     std::vector<QRect> letterRects;
     auto answerStr = answer->text();
-    auto metrics = fontMetrics();
+    auto metrics = answer->fontMetrics();
     int y = answer->y();
     int x = answer->x();
     for (int i = 0; i < answerStr.length(); ++i)
@@ -155,7 +151,6 @@ void ClozePhraseWidget::flip(const QString& answer)
     isFlipped = true;
     //create the answer label
     answerLabel = new ClozeLabel(answer, this);
-    answerLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     int xMatch = hiddenLabel->x();
     int yBottom = 0;
     for (auto& label : targetLabels)
@@ -177,8 +172,6 @@ ClozeContent::ClozeContent(Card* _card, QWidget* parent) :
     editBox = new QLineEdit(this);
     mainLayout->addWidget(nativeLabel);
     mainLayout->addWidget(phraseWidget);
-    phraseWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    phraseWidget->setFixedWidth(phraseWidget->getPhraseWidth());
     mainLayout->addWidget(editBox);
     setLayout(mainLayout);
 }
@@ -297,6 +290,8 @@ CardWidget::CardWidget(Deck* deck, QWidget *parent) :
     setButtonDayValues(a1, a2, a3);
     setButtonsVisible(false);
     viewer->currentContent->setFocus(Qt::ActiveWindowFocusReason);
+    //constrain the viewer to the not take up the whole screen
+    viewer->setMaximumHeight(height() * 0.33f);
     updateIndexLabel();
 }
 

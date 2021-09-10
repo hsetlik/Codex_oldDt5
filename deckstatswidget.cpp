@@ -33,15 +33,27 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     totalCards(0)
 {
     ui->setupUi(this);
+    mainLayout = new QVBoxLayout;
+    mainWidget = new QWidget(this);
+    mainWidget->setLayout(mainLayout);
+    mainWidget->setFocus(Qt::ActiveWindowFocusReason);
+    ui->scrollArea->setWidget(mainWidget);
+    ui->scrollArea->setWidgetResizable(true);
     auto lStr = name + " Deck Statistics";
-    ui->nameLabel->setText(lStr);
+    auto nameLabel = new QLabel(lStr, this);
+    mainLayout->addWidget(nameLabel);
     auto easeView = new QChartView(easeCurveForCurrentDeck(), this);
-    ui->mainLayout->addWidget(easeView);
-    auto addedView = new QChartView(additionHistory(), this);
-    ui->mainLayout->addWidget(addedView);
+    easeView->setMinimumHeight(easeView->sizeHint().height());
+    mainLayout->addWidget(easeView);
     QString cardCountStr = "Total Cards: " + QString::number(totalCards);
-    auto cardCountLabel = new QLabel(cardCountStr, this);
-    ui->mainLayout->addWidget(cardCountLabel);
+    for(int i = 0; i < 6; ++i)
+    {
+        auto cardCountLabel = new QLabel(cardCountStr, this);
+        mainLayout->addWidget(cardCountLabel);
+    }
+    auto addedView = new QChartView(additionHistory(), this);
+    addedView->setMinimumHeight(addedView->sizeHint().height());
+    mainLayout->addWidget(addedView);
 }
 
 DeckStatsWidget::~DeckStatsWidget()
@@ -83,6 +95,7 @@ QChart* DeckStatsWidget::easeCurveForCurrentDeck()
     chart->createDefaultAxes();
     chart->axes(Qt::Horizontal).first()->setRange(0, xMax - 1);
     chart->axes(Qt::Vertical).first()->setRange(0, yMax);
+    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     return chart;
 }
 QChart* DeckStatsWidget::additionHistory()
@@ -103,6 +116,7 @@ QChart* DeckStatsWidget::additionHistory()
     chart->addSeries(series);
     chart->createDefaultAxes();
     chart->axes(Qt::Vertical).first()->setRange(0, maxValue);
+    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     return chart;
 }
 

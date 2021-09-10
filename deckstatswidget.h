@@ -35,6 +35,8 @@ private:
     Ui::DeckStatsWidget *ui;
     DeckStatsManager manager;
     int totalCards;
+    QWidget* mainWidget;
+    QVBoxLayout* mainLayout;
 };
 
 #endif // DECKSTATSWIDGET_H
