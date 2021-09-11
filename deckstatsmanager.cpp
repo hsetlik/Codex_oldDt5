@@ -25,6 +25,8 @@ DeckStatsManager::~DeckStatsManager()
 void DeckStatsManager::addSnapshot(Deck* sourceDeck)
 {
     auto shot = getSnapshot(sourceDeck);
+    auto snapDate = QDateTime::fromString(shot["Date"].toString()).date();
+    removeSnapshotOnDate(snapDate);
     snapshots.append(shot);
 }
 
@@ -159,4 +161,30 @@ std::map<QDate, int> DeckStatsManager::getSnapshots(SnapshotType type)
             return snapshotNumCards();
     }
 }
+
+bool DeckStatsManager::hasSnapshotOnDate(QDate date)
+{
+    for(int i = 0; i < snapshots.size(); ++i)
+    {
+        auto snapDateStr = snapshots[i].toObject()["Date"].toString();
+        auto snapDate = QDateTime::fromString(snapDateStr).date();
+        if (date == snapDate)
+            return true;
+    }
+    return false;
+}
+// fine to call this unchecked on empty dates
+ void DeckStatsManager::removeSnapshotOnDate(QDate date)
+ {
+     for(auto it = snapshots.begin(); it != snapshots.end(); ++it)
+     {
+         auto snapDateStr = it->toObject()["Date"].toString();
+         auto snapDate = QDateTime::fromString(snapDateStr).date();
+         if (date == snapDate)
+         {
+             snapshots.erase(it);
+             return;
+         }
+     }
+ }
 

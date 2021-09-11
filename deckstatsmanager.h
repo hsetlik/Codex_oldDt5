@@ -24,8 +24,8 @@ private:
     std::map<QDate, int> snapshotNumCards();
     std::map<QDate, int> snapshotAvgEase();
     std::map<QDate, int> snapshotAvgInterval();
-
-private:
+    bool hasSnapshotOnDate(QDate date);
+    void removeSnapshotOnDate(QDate date);
     Deck* currentDeck;
     QJsonArray snapshots;
 };
