@@ -29,30 +29,87 @@
 SnapshotGraphWidget::SnapshotGraphWidget(DeckStatsManager* m, QWidget* parent) :
     QWidget(parent),
     manager(m),
-    currentGraph(nullptr)
+    mainLayout(nullptr),
+    dataBox(nullptr),
+    currentChart(nullptr),
+    currentChartView(nullptr),
+    currentType(TotalCards)
 {
     mainLayout = new QVBoxLayout;
+    dataBox = new QComboBox(this);
+    const std::vector<QString> snapshotTypes =
+    {
+        "Total Cards",
+        "Average Ease",
+        "Average Interval"
+    };
+    for (auto& type  : snapshotTypes)
+    {
+        dataBox->addItem(type);
+    }
+    dataBox->setMaximumHeight(dataBox->sizeHint().height());
+    mainLayout->addWidget(dataBox);
     setLayout(mainLayout);
+    //connect the combo box
+    connect(dataBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, &SnapshotGraphWidget::typeBoxChanged);
+    //set the combo box to return to default value and call the setGraphFor signal
+    dataBox->setCurrentIndex(0);
+    setGraphFor(currentType);
 }
-SnapshotGraphWidget::SnapshotGraphWidget(DeckStatsManager* m, const QString& property, QWidget* parent) :
-    QWidget(parent),
-    manager(m),
-    currentGraph(nullptr)
+void SnapshotGraphWidget::setGraphFor(SnapshotType type)
 {
-    mainLayout = new QVBoxLayout;
-    setLayout(mainLayout);
-    setGraphFor(property);
+    //clear out the old graph
+    if (currentChartView != nullptr)
+    {
+        mainLayout->removeWidget(currentChartView);
+        delete currentChartView;
+    }
+    currentChart = makeChartFor(type);
+    currentChartView = new QChartView(currentChart, this);
+    mainLayout->addWidget(currentChartView);
+    currentChartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
-QChart* SnapshotGraphWidget::createChart(const QString& property)
+QChart* SnapshotGraphWidget::makeChartFor(SnapshotType type)
 {
+    const std::vector<QString> snapshotTypes =
+    {
+        "Total Cards",
+        "Average Ease",
+        "Average Interval"
+    };
+    const QString chartName = snapshotTypes[(int)type];
     auto chart = new QChart();
-
+    chart->setTitle(chartName);
+    auto map = manager->getSnapshots(type);
+    auto series = new QLineSeries;
+    int idx = 0;
+    int yMax = 0;
+    for (auto& snap : map)
+    {
+        if (snap.second > yMax)
+            yMax = snap.second;
+        printf("Snapshot %d value: %d", idx, snap.second);
+        series->append((float)idx, (float)snap.second);
+    }
+    chart->addSeries(series);
+    chart->createDefaultAxes();
+    chart->axes(Qt::Horizontal).first()->setRange(0, (int)map.size() - 1);
+    chart->axes(Qt::Vertical).first()->setRange(0, yMax);
+    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    printf("Snapshot chart height: %lf\n", chart->size().height());
     return chart;
 }
-
-void SnapshotGraphWidget::setGraphFor(const QString &property)
+void SnapshotGraphWidget::typeBoxChanged(int typeIdx)
 {
-
+    if (dataBox != nullptr)
+    {
+        if (typeIdx != (int)currentType)
+        {
+            currentType = (SnapshotType)typeIdx;
+            setGraphFor(currentType);
+        }
+    }
 }
 //=================================================================
 DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
@@ -64,7 +121,7 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     ui->setupUi(this);
     mainLayout = new QVBoxLayout;
     mainWidget = new QWidget(this);
-    mainWidget->setMinimumHeight(800);
+    mainWidget->setMinimumHeight(1000);
     mainWidget->setLayout(mainLayout);
     mainWidget->setFocus(Qt::ActiveWindowFocusReason);
     ui->scrollArea->setWidget(mainWidget);
@@ -72,17 +129,27 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     auto lStr = name + " Deck Statistics";
     ui->deckNameLabel->setText(lStr);
 
+    auto easeData = manager.latestCardEases();
+    totalCards = (int)easeData.size();
+
     QString cardCountStr = "Total Cards: " + QString::number(totalCards);
     auto cardCountLabel = new QLabel(cardCountStr, this);
     mainLayout->addWidget(cardCountLabel);
 
-    auto easeView = new QChartView(easeCurveForCurrentDeck(), this);
+    auto easeView = new QChartView(easeCurveForCurrentDeck(easeData), this);
+    printf("Ease hinted height is: %d\n", easeView->sizeHint().height());
     easeView->setMinimumHeight(easeView->sizeHint().height());
     mainLayout->addWidget(easeView);
 
     auto addedView = new QChartView(additionHistory(), this);
+    printf("Added hinted height is: %d\n", addedView->sizeHint().height());
     addedView->setMinimumHeight(addedView->sizeHint().height());
     mainLayout->addWidget(addedView);
+
+    auto snapshotView = new SnapshotGraphWidget(&manager, this);
+    printf("Snapshot hinted height is: %d\n", snapshotView->sizeHint().height());
+    snapshotView->setMinimumHeight(snapshotView->sizeHint().height());
+    mainLayout->addWidget(snapshotView);
 }
 
 DeckStatsWidget::~DeckStatsWidget()
@@ -95,17 +162,15 @@ void DeckStatsWidget::on_backButton_clicked()
     Q_EMIT exitToManager();
 }
 
-QChart* DeckStatsWidget::easeCurveForCurrentDeck()
+QChart* DeckStatsWidget::easeCurveForCurrentDeck(std::vector<float>& easeData)
 {
     //create the chart
     QChart *chart = new QChart();
     chart->setTitle("Current Card Ease");
     //grab the ease data from the manager
-    auto easeData = manager.latestCardEases();
     std::sort(easeData.begin(), easeData.end());
     auto yMax = easeData.back();
     auto xMax = (int)easeData.size();
-    totalCards = xMax;
     //create line series
     auto lowerLine = new QLineSeries(chart);
     auto upperLine = new QLineSeries(chart);
@@ -124,7 +189,8 @@ QChart* DeckStatsWidget::easeCurveForCurrentDeck()
     chart->createDefaultAxes();
     chart->axes(Qt::Horizontal).first()->setRange(0, xMax - 1);
     chart->axes(Qt::Vertical).first()->setRange(0, yMax);
-    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    printf("Ease chart height: %lf\n", chart->size().height());
     return chart;
 }
 QChart* DeckStatsWidget::additionHistory()
@@ -145,7 +211,8 @@ QChart* DeckStatsWidget::additionHistory()
     chart->addSeries(series);
     chart->createDefaultAxes();
     chart->axes(Qt::Vertical).first()->setRange(0, maxValue);
-    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    chart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    printf("Addition chart height: %lf\n", chart->size().height());
     return chart;
 }
 

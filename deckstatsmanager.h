@@ -1,7 +1,12 @@
 #ifndef DECKSTATSMANAGER_H
 #define DECKSTATSMANAGER_H
 #include "cardstructure.h"
-
+enum SnapshotType
+{
+    TotalCards,
+    AverageEase,
+    AverageInterval
+};
 class DeckStatsManager
 {
 public:
@@ -14,7 +19,12 @@ public:
     void saveToFile();
     std::vector<float> latestCardEases();
     std::map<QDate, int> getAdditionHistory();
+    std::map<QDate, int> getSnapshots(SnapshotType type);
+private:
     std::map<QDate, int> snapshotNumCards();
+    std::map<QDate, int> snapshotAvgEase();
+    std::map<QDate, int> snapshotAvgInterval();
+
 private:
     Deck* currentDeck;
     QJsonArray snapshots;

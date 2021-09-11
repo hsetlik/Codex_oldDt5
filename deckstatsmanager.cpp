@@ -102,3 +102,61 @@ std::map<QDate, int> DeckStatsManager::snapshotNumCards()
     return valueMap;
 }
 
+std::map<QDate, int> DeckStatsManager::snapshotAvgEase()
+{
+    std::map<QDate, int> valueMap;
+    for(int i = 0; i < snapshots.size(); ++i)
+    {
+        auto obj = snapshots[i].toObject();
+        auto tDeck = new Deck(obj);
+        auto date = QDateTime::fromString(obj["Date"].toString()).date();
+        //figure out the total ease
+        double totalEase = 0.0f;
+        for (auto& card : tDeck->allCards)
+        {
+            totalEase += card->getEase();
+        }
+        int percentageEase = (int)(totalEase / (double)tDeck->allCards.size()) * 100.0f;
+        valueMap[date] = percentageEase;
+        delete tDeck;
+    }
+    return valueMap;
+}
+
+std::map<QDate, int> DeckStatsManager::snapshotAvgInterval()
+{
+    std::map<QDate, int> valueMap;
+    for(int i = 0; i < snapshots.size(); ++i)
+    {
+        auto obj = snapshots[i].toObject();
+        auto tDeck = new Deck(obj);
+        auto date = QDateTime::fromString(obj["Date"].toString()).date();
+        //figure out the total ease
+        int totalInterval = 0;
+        for (auto& card : tDeck->allCards)
+        {
+            totalInterval += card->getCurrentInterval();
+        }
+        int avgInterval = (int)totalInterval / tDeck->allCards.size();
+        valueMap[date] = avgInterval;
+        delete tDeck;
+    }
+    return valueMap;
+}
+
+std::map<QDate, int> DeckStatsManager::getSnapshots(SnapshotType type)
+{
+    //one main public function which call the approproate private function for the type
+    switch (type)
+    {
+        case TotalCards:
+            return snapshotNumCards();
+        case AverageEase:
+            return snapshotAvgEase();
+        case AverageInterval:
+            return snapshotAvgInterval();
+        default:
+            return snapshotNumCards();
+    }
+}
+

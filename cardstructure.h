@@ -89,6 +89,7 @@ struct Card
     double getEase() {return easeLevel; }
     void resetEase() {easeLevel = 2.5f; }
     void resetTimesAnswered() {timesAnswered = 0; }
+    int getCurrentInterval() {return intervalDays; }
 protected:
     QDateTime dateCreated;
     QDateTime dateNextDue;

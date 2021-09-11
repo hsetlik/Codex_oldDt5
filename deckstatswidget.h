@@ -17,18 +17,23 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
+
 class SnapshotGraphWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit SnapshotGraphWidget(DeckStatsManager* m, QWidget* parent = nullptr);
-    SnapshotGraphWidget(DeckStatsManager* m, const QString& property, QWidget* parent = nullptr);
     DeckStatsManager* const manager;
-    void setGraphFor(const QString& property);
+    void setGraphFor(SnapshotType type);
+private Q_SLOTS:
+    void typeBoxChanged(int typeIdx);
 private:
-    QChart* createChart(const QString& property);
-    QWidget* currentGraph;
+    QChart* makeChartFor(SnapshotType type);
     QVBoxLayout* mainLayout;
+    QComboBox* dataBox;
+    QChart* currentChart;
+    QChartView* currentChartView;
+    SnapshotType currentType;
 };
 
 class DeckStatsWidget : public QWidget
@@ -44,7 +49,7 @@ private Q_SLOTS:
     void on_backButton_clicked();
 
 private:
-    QChart* easeCurveForCurrentDeck();
+    QChart* easeCurveForCurrentDeck(std::vector<float>& easeData);
     QChart* additionHistory();
     Ui::DeckStatsWidget *ui;
     DeckStatsManager manager;

@@ -6,8 +6,10 @@
 
 #include <QApplication>
 
+static const char* ALLOCATION_TAG = "PollySample::Main";
+
 int main(int argc, char *argv[])
-{
+{   
     Aws::SDKOptions options;
     Aws::InitAPI(options);
     QApplication a(argc, argv);
