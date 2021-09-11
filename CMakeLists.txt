@@ -15,14 +15,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Check https://doc.qt.io/qt/deployment-android.html for more information.
 # They need to be set before the find_package( ...) calls below.
 
-#if(ANDROID)
+# if(ANDROID)
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
 #    if (ANDROID_ABI STREQUAL "armeabi-v7a")
 #        set(ANDROID_EXTRA_LIBS
 #            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
 #            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
 #    endif()
-#endif()
+# endif()
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
@@ -75,6 +75,8 @@ set(PROJECT_SOURCES
     deckstatswidget.ui
     codexstyle.h
     codexstyle.cpp
+    codextts.cpp
+    codextts.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -96,7 +98,10 @@ endif()
 
 target_link_libraries(Codex PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-#target_link_libraries(Codex PRIVATE  ${AWSSDK_LINK_LIBRARIES})
+target_link_libraries(Codex PRIVATE  aws-cpp-sdk-polly)
+
+target_link_libraries(Codex PRIVATE  aws-cpp-sdk-core)
+
 
 target_link_libraries(Codex  PRIVATE Qt${QT_VERSION_MAJOR}::Network)
 

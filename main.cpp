@@ -1,10 +1,15 @@
 #include "codexmainwindow.h"
 #include "codexstyle.h"
 
+#include <aws/core/Aws.h>
+#include <aws/text-to-speech/TextToSpeechManager.h>
+
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
+    Aws::SDKOptions options;
+    Aws::InitAPI(options);
     QApplication a(argc, argv);
     a.setStyle(new CodexStyle);
     auto labelFont = a.font("QLabel");
@@ -14,5 +19,7 @@ int main(int argc, char *argv[])
     a.setFont(labelFont, "QLabel");
     CodexMainWindow w;
     w.show();
-    return a.exec();
+    auto value = a.exec();
+    Aws::ShutdownAPI(options);
+    return value;
 }
