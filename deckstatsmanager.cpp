@@ -21,11 +21,11 @@ DeckStatsManager::~DeckStatsManager()
 {
     saveToFile();
 }
-
 void DeckStatsManager::addSnapshot(Deck* sourceDeck)
 {
     auto shot = getSnapshot(sourceDeck);
     auto snapDate = QDateTime::fromString(shot["Date"].toString()).date();
+    //make sure we don't end up with multiple snapshots recorded on the same day
     removeSnapshotOnDate(snapDate);
     snapshots.append(shot);
 }
@@ -40,14 +40,13 @@ QJsonObject DeckStatsManager::getSnapshot(Deck* const src)
 
 void DeckStatsManager::saveToFile()
 {
-    auto sDeckFile = "deck_stats/" + deckName + "_stats.json";
-    QString deckFileName = sDeckFile;
+    QString deckFileName = "deck_stats/" + deckName + "_stats.json";
     QFile loadFile(deckFileName);
     if(!loadFile.open(QIODevice::ReadWrite | QIODevice::Truncate))
         printf("File not loaded\n");
     auto deckJsonDoc = QJsonDocument(snapshots);
     auto bytesWritten = loadFile.write(deckJsonDoc.toJson());
-    printf("%lld bytes written to file\n", bytesWritten);
+    printf("%lld bytes written to snapshot file: \"%s\"\n", bytesWritten, deckFileName.toStdString().c_str());
     loadFile.close();
 }
 
@@ -187,4 +186,3 @@ bool DeckStatsManager::hasSnapshotOnDate(QDate date)
          }
      }
  }
-
