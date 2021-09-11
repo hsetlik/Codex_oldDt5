@@ -93,7 +93,7 @@ std::map<QDate, int> DeckStatsManager::snapshotNumCards()
     for(int i = 0; i < snapshots.size(); ++i)
     {
         auto obj = snapshots[i].toObject();
-        auto tDeck = new Deck(obj);
+        auto tDeck = new Deck(obj["Deck"].toObject());
         auto date = QDateTime::fromString(obj["Date"].toString()).date();
         int count = (int)tDeck->allCards.size();
         valueMap[date] = count;
@@ -108,7 +108,7 @@ std::map<QDate, int> DeckStatsManager::snapshotAvgEase()
     for(int i = 0; i < snapshots.size(); ++i)
     {
         auto obj = snapshots[i].toObject();
-        auto tDeck = new Deck(obj);
+        auto tDeck = new Deck(obj["Deck"].toObject());
         auto date = QDateTime::fromString(obj["Date"].toString()).date();
         //figure out the total ease
         double totalEase = 0.0f;
@@ -129,7 +129,7 @@ std::map<QDate, int> DeckStatsManager::snapshotAvgInterval()
     for(int i = 0; i < snapshots.size(); ++i)
     {
         auto obj = snapshots[i].toObject();
-        auto tDeck = new Deck(obj);
+        auto tDeck = new Deck(obj["Deck"].toObject());
         auto date = QDateTime::fromString(obj["Date"].toString()).date();
         //figure out the total ease
         int totalInterval = 0;
