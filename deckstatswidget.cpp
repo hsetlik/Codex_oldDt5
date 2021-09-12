@@ -47,7 +47,7 @@ QChart* SnapshotChartFactory::getChartForType(SnapshotType type)
     chart->addSeries(line);
 
     chart->createDefaultAxes();
-    chart->axes(Qt::Horizontal).first()->setRange(0, idx);
+    chart->axes(Qt::Horizontal).first()->setRange(0, idx - 1);
     chart->axes(Qt::Vertical).first()->setRange(0, yMax);
 
     return chart;

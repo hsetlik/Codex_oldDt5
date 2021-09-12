@@ -6,7 +6,6 @@
 #include <QJsonArray>
 class PhrasePair;
 
-
 struct Word
 {
     Word (QString _text, PhrasePair* _parent) :
