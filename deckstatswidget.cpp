@@ -59,7 +59,20 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     printf("Added hinted height is: %d\n", addedView->sizeHint().height());
     addedView->setMinimumHeight(addedView->sizeHint().height());
     mainLayout->addWidget(addedView);
-
+    //snapshot time
+    snapshotBox = new QComboBox(this);
+    auto names = DeckSnapshot::snapshotTypeNames();
+    for (auto str : names)
+    {
+        snapshotBox->addItem(str);
+    }
+    mainLayout->addWidget(snapshotBox);
+    connect(snapshotBox,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this,
+            &DeckStatsWidget::setToSnapshotType);
+    snapshotChartView = new QChartView(snapshotChartForType(TotalCards), this);
+    mainLayout->addWidget(snapshotChartView);
 
 }
 
@@ -122,4 +135,37 @@ QChart* DeckStatsWidget::additionHistory()
     chart->createDefaultAxes();
     chart->axes(Qt::Vertical).first()->setRange(0, maxValue);
     return chart;
+}
+
+QChart* DeckStatsWidget::snapshotChartForType(SnapshotType type)
+{
+    auto chart = new QChart();
+    auto map = manager.snapshotGraph(type);
+    auto name = DeckSnapshot::snapshotTypeNames()[(int)type];
+    chart->setTitle(name);
+    auto series = new QLineSeries(chart);
+    double maxValue = 0.0f;
+    int idx = 0;
+    for(auto& value : map)
+    {
+        QPointF point((double)idx, value.second);
+        printf("Snapshot point at: %lf, %lf\n", point.x(), point.y());
+        if(value.second > maxValue)
+            maxValue = value.second;
+        series->append(point);
+        ++idx;
+    }
+    chart->addSeries(series);
+    //set up axes
+    chart->createDefaultAxes();
+    chart->axes(Qt::Horizontal).first()->setRange(0, (int)map.size() - 1);
+    chart->axes(Qt::Vertical).first()->setRange(0, (int)maxValue);
+
+    return chart;
+}
+
+
+void DeckStatsWidget::setToSnapshotType(int type)
+{
+    snapshotChartView->setChart(snapshotChartForType((SnapshotType)type));
 }

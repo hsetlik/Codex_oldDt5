@@ -19,6 +19,15 @@ public:
     int getTotalCards() {return totalCards; }
     double getAvgEase() {return avgEase; }
     double getAvgInterval() {return avgInterval; }
+    static std::vector<QString> snapshotTypeNames()
+    { //make sure these stay in same order as the enum as more data bits are added
+        return
+        {
+            "Total Cards",
+            "Average Ease",
+            "Average Interval"
+        };
+    }
 private:
     QDate date;
     int totalCards;

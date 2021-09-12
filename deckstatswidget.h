@@ -29,15 +29,21 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void on_backButton_clicked();
+    void setToSnapshotType(int type);
 
 private:
     QChart* easeCurveForCurrentDeck(std::vector<float>& easeData);
     QChart* additionHistory();
+    QChart* snapshotChartForType(SnapshotType type);
+
     Ui::DeckStatsWidget *ui;
     DeckStatsManager manager;
     int totalCards;
     QWidget* mainWidget;
     QVBoxLayout* mainLayout;
+    //Snapshot chart widgets
+    QComboBox* snapshotBox;
+    QChartView* snapshotChartView;
 };
 
 #endif // DECKSTATSWIDGET_H
