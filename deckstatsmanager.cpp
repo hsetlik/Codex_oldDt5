@@ -1,5 +1,41 @@
 #include "deckstatsmanager.h"
 
+DeckStatsManager::DeckSnapshot::DeckSnapshot(Deck* deck)
+{
+    //this constructor should only be used when creating a new snapshot on the current day
+    date = QDate::currentDate();
+    // 1. calculate total cards
+    totalCards = (int)deck->allCards.size();
+    // 2. get the average ease & average interval
+    double totalEase = 0.0f;
+    double totalInterval = 0.0f;
+    for (auto& card : deck->allCards)
+    {
+        totalEase += card->getEase();
+        totalInterval += (double)card->getCurrentInterval();
+    }
+    avgEase = (double)(totalEase / totalCards);
+    avgInterval = (double)(totalInterval / totalCards);
+}
+
+DeckStatsManager::DeckSnapshot::DeckSnapshot(QJsonObject obj)
+{
+    //this corresponds to getJsonObject
+    date = QDate::fromString(obj["Date"].toString());
+    totalCards = obj["TotalCards"].toInt();
+    avgEase = obj["AverageEase"].toDouble();
+    avgInterval = obj["AverageInterval"].toDouble();
+}
+QJsonObject DeckStatsManager::DeckSnapshot::getJsonObject()
+{
+    QJsonObject obj;
+    obj["Date"] = date.toString();
+    obj["TotalCards"] = totalCards;
+    obj["AverageEase"] = avgEase;
+    obj["AverageInterval"] = avgInterval;
+    return obj;
+}
+//==================================================================
 DeckStatsManager::DeckStatsManager(QString name) :
     deckName(name)
 {
@@ -20,6 +56,17 @@ DeckStatsManager::DeckStatsManager(QString name) :
 DeckStatsManager::~DeckStatsManager()
 {
     saveToFile();
+}
+
+std::vector<DeckStatsManager::DeckSnapshot> DeckStatsManager::fromJsonArray(QJsonArray arr)
+{
+    std::vector<DeckStatsManager::DeckSnapshot> output;
+    for (int i = 0; i < arr.size(); ++i)
+    {
+        auto obj = arr[i].toObject();
+        output.push_back(DeckSnapshot(obj));
+    }
+    return output;
 }
 void DeckStatsManager::addSnapshot(Deck* sourceDeck)
 {
