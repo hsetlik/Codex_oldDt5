@@ -26,39 +26,11 @@
 #include <QtWidgets/QApplication>
 #include <QtCharts/QValueAxis>
 //=================================================================
-QChart* SnapshotChartFactory::getChartForType(SnapshotType type)
-{
-    auto chart = new QChart();
-    //make sure this stays in the same order as the enum
-    QString typeNames[3] = {"Total Cards", "Average Ease", "Average Interval"};
-    chart->setTitle(typeNames[(int)type]);
-
-    auto map = manager->getSnapshots(type);
-    auto line = new QLineSeries(chart);
-    int idx = 0;
-    int yMax = 0;
-    for (auto& snap : map)
-    {
-        if (snap.second > yMax)
-            yMax = snap.second;
-        QPointF point((double)idx, (double)snap.second);
-        line->append(point);
-    }
-    chart->addSeries(line);
-
-    chart->createDefaultAxes();
-    chart->axes(Qt::Horizontal).first()->setRange(0, idx);
-    chart->axes(Qt::Vertical).first()->setRange(0, yMax);
-
-    return chart;
-}
-//=================================================================
 DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DeckStatsWidget),
     manager(name),
-    totalCards(0),
-    snapFactory(&manager)
+    totalCards(0)
 {
     ui->setupUi(this);
     mainLayout = new QVBoxLayout;
@@ -82,16 +54,6 @@ DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     printf("Ease hinted height is: %d\n", easeView->sizeHint().height());
     easeView->setMinimumHeight(easeView->sizeHint().height());
     mainLayout->addWidget(easeView);
-    std::vector<QString> typeNames = {"Total Cards", "Average Ease", "Average Interval"};
-    snapBox = new QComboBox(this);
-    for(auto& name : typeNames)
-        snapBox->addItem(name);
-    connect(snapBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-        this, &DeckStatsWidget::changeToSnapType);
-    mainLayout->addWidget(snapBox);
-    auto snapChart = snapFactory.getChartForType((SnapshotType)snapBox->currentIndex());
-    snapView = new QChartView(snapChart, this);
-    mainLayout->addWidget(snapView);
 
     auto addedView = new QChartView(additionHistory(), this);
     printf("Added hinted height is: %d\n", addedView->sizeHint().height());
@@ -161,10 +123,3 @@ QChart* DeckStatsWidget::additionHistory()
     chart->axes(Qt::Vertical).first()->setRange(0, maxValue);
     return chart;
 }
-
-void DeckStatsWidget::changeToSnapType(int type)
-{
-    auto chart = snapFactory.getChartForType((SnapshotType)type);
-    snapView->setChart(chart);
-}
-
