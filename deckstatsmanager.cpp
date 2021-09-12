@@ -123,3 +123,44 @@ std::map<QDate, int> DeckStatsManager::getAdditionHistory()
     }
     return map;
 }
+
+ std::map<QDate, double> DeckStatsManager::snapshotGraph(SnapshotType type)
+ {
+     switch (type)
+     {
+     case TotalCards:
+         return totalCardsSnap();
+     case AverageEase:
+         return avgEaseSnap();
+     case AverageInterval:
+         return avgIntervalSnap();
+     }
+ }
+
+std::map<QDate, double> DeckStatsManager::totalCardsSnap()
+{
+    std::map<QDate, double> map;
+    for (auto& snap : snapshots)
+    {
+        map[snap.getDate()] = (double)snap.getTotalCards();
+    }
+    return map;
+}
+std::map<QDate, double> DeckStatsManager::avgEaseSnap()
+{
+    std::map<QDate, double> map;
+    for (auto& snap : snapshots)
+    {
+        map[snap.getDate()] = snap.getAvgEase();
+    }
+    return map;
+}
+std::map<QDate, double> DeckStatsManager::avgIntervalSnap()
+{
+    std::map<QDate, double> map;
+    for (auto& snap : snapshots)
+    {
+        map[snap.getDate()] = snap.getAvgInterval();
+    }
+    return map;
+}

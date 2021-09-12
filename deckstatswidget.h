@@ -18,8 +18,6 @@ QT_CHARTS_END_NAMESPACE
 QT_CHARTS_USE_NAMESPACE
 
 
-
-
 class DeckStatsWidget : public QWidget
 {
     Q_OBJECT
