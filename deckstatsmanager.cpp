@@ -1,5 +1,41 @@
 #include "deckstatsmanager.h"
 
+DeckSnapshot::DeckSnapshot(Deck* deck)
+{
+    //this constructor should only be used when creating a new snapshot on the current day
+    date = QDate::currentDate();
+    // 1. calculate total cards
+    totalCards = (int)deck->allCards.size();
+    // 2. get the average ease & average interval
+    double totalEase = 0.0f;
+    double totalInterval = 0.0f;
+    for (auto& card : deck->allCards)
+    {
+        totalEase += card->getEase();
+        totalInterval += (double)card->getCurrentInterval();
+    }
+    avgEase = (double)(totalEase / totalCards);
+    avgInterval = (double)(totalInterval / totalCards);
+}
+
+DeckSnapshot::DeckSnapshot(QJsonObject obj)
+{
+    //this corresponds to getJsonObject
+    date = QDate::fromString(obj["Date"].toString());
+    totalCards = obj["TotalCards"].toInt();
+    avgEase = obj["AverageEase"].toDouble();
+    avgInterval = obj["AverageInterval"].toDouble();
+}
+QJsonObject DeckSnapshot::getJsonObject()
+{
+    QJsonObject obj;
+    obj["Date"] = date.toString();
+    obj["TotalCards"] = totalCards;
+    obj["AverageEase"] = avgEase;
+    obj["AverageInterval"] = avgInterval;
+    return obj;
+}
+//==================================================================
 DeckStatsManager::DeckStatsManager(QString name) :
     deckName(name)
 {
@@ -12,30 +48,29 @@ DeckStatsManager::DeckStatsManager(QString name) :
     {
         auto byteData = statsFile.readAll();
          QJsonDocument doc(QJsonDocument::fromJson(byteData));
-         snapshots = doc.array();
+         auto snapObjects = doc.array();
+         for (int i = 0; i < snapObjects.size(); ++i)
+         {
+             auto obj = snapObjects[i].toObject();
+             snapshots.push_back(DeckSnapshot(obj));
+         }
     }
     currentDeck = new Deck(deckName);
+}
+
+QJsonArray DeckStatsManager::getSnapshotArray()
+{
+    QJsonArray arr;
+    for (auto& snap : snapshots)
+    {
+        arr.append(snap.getJsonObject());
+    }
+    return arr;
 }
 
 DeckStatsManager::~DeckStatsManager()
 {
     saveToFile();
-}
-void DeckStatsManager::addSnapshot(Deck* sourceDeck)
-{
-    auto shot = getSnapshot(sourceDeck);
-    auto snapDate = QDateTime::fromString(shot["Date"].toString()).date();
-    //make sure we don't end up with multiple snapshots recorded on the same day
-    removeSnapshotOnDate(snapDate);
-    snapshots.append(shot);
-}
-
-QJsonObject DeckStatsManager::getSnapshot(Deck* const src)
-{
-    QJsonObject obj;
-    obj["Date"] = QDateTime::currentDateTime().toString();
-    obj["Deck"] = src->getDeckAsObject();
-    return obj;
 }
 
 void DeckStatsManager::saveToFile()
@@ -44,10 +79,18 @@ void DeckStatsManager::saveToFile()
     QFile loadFile(deckFileName);
     if(!loadFile.open(QIODevice::ReadWrite | QIODevice::Truncate))
         printf("File not loaded\n");
-    auto deckJsonDoc = QJsonDocument(snapshots);
+
+    auto deckJsonDoc = QJsonDocument(getSnapshotArray());
     auto bytesWritten = loadFile.write(deckJsonDoc.toJson());
     printf("%lld bytes written to snapshot file: \"%s\"\n", bytesWritten, deckFileName.toStdString().c_str());
     loadFile.close();
+}
+
+void DeckStatsManager::createSnapshot(Deck* deck)
+{
+    DeckStatsManager manager(deck->getName());
+    manager.addSnapshot(deck);
+    manager.saveToFile();
 }
 
 std::vector<float> DeckStatsManager::latestCardEases()
@@ -80,109 +123,3 @@ std::map<QDate, int> DeckStatsManager::getAdditionHistory()
     }
     return map;
 }
-
-void DeckStatsManager::addSnapshot(Deck* sourceDeck, QString name)
-{
-    auto manager = new DeckStatsManager(name);
-    manager->addSnapshot(sourceDeck);
-    delete manager;
-}
-
-std::map<QDate, int> DeckStatsManager::snapshotNumCards()
-{
-    std::map<QDate, int> valueMap;
-    for(int i = 0; i < snapshots.size(); ++i)
-    {
-        auto obj = snapshots[i].toObject();
-        auto tDeck = new Deck(obj["Deck"].toObject());
-        auto date = QDateTime::fromString(obj["Date"].toString()).date();
-        int count = (int)tDeck->allCards.size();
-        valueMap[date] = count;
-        delete tDeck;
-    }
-    return valueMap;
-}
-
-std::map<QDate, int> DeckStatsManager::snapshotAvgEase()
-{
-    std::map<QDate, int> valueMap;
-    for(int i = 0; i < snapshots.size(); ++i)
-    {
-        auto obj = snapshots[i].toObject();
-        auto tDeck = new Deck(obj["Deck"].toObject());
-        auto date = QDateTime::fromString(obj["Date"].toString()).date();
-        //figure out the total ease
-        double totalEase = 0.0f;
-        for (auto& card : tDeck->allCards)
-        {
-            totalEase += card->getEase();
-        }
-        int percentageEase = (int)(totalEase / (double)tDeck->allCards.size()) * 100.0f;
-        valueMap[date] = percentageEase;
-        delete tDeck;
-    }
-    return valueMap;
-}
-
-std::map<QDate, int> DeckStatsManager::snapshotAvgInterval()
-{
-    std::map<QDate, int> valueMap;
-    for(int i = 0; i < snapshots.size(); ++i)
-    {
-        auto obj = snapshots[i].toObject();
-        auto tDeck = new Deck(obj["Deck"].toObject());
-        auto date = QDateTime::fromString(obj["Date"].toString()).date();
-        //figure out the total ease
-        int totalInterval = 0;
-        for (auto& card : tDeck->allCards)
-        {
-            totalInterval += card->getCurrentInterval();
-        }
-        int avgInterval = (int)totalInterval / tDeck->allCards.size();
-        valueMap[date] = avgInterval;
-        delete tDeck;
-    }
-    return valueMap;
-}
-
-std::map<QDate, int> DeckStatsManager::getSnapshots(SnapshotType type)
-{
-    //one main public function which call the approproate private function for the type
-    switch (type)
-    {
-        case TotalCards:
-            return snapshotNumCards();
-        case AverageEase:
-            return snapshotAvgEase();
-        case AverageInterval:
-            return snapshotAvgInterval();
-        default:
-            return snapshotNumCards();
-    }
-}
-
-bool DeckStatsManager::hasSnapshotOnDate(QDate date)
-{
-    for(int i = 0; i < snapshots.size(); ++i)
-    {
-        auto snapDateStr = snapshots[i].toObject()["Date"].toString();
-        auto snapDate = QDateTime::fromString(snapDateStr).date();
-        if (date == snapDate)
-            return true;
-    }
-    return false;
-}
-// fine to call this unchecked on empty dates
- void DeckStatsManager::removeSnapshotOnDate(QDate date)
- {
-     for(auto it = snapshots.begin(); it != snapshots.end(); ++it)
-     {
-         auto snapDateStr = it->toObject()["Date"].toString();
-         auto snapDate = QDateTime::fromString(snapDateStr).date();
-         if (date == snapDate)
-         {
-             snapshots.erase(it);
-             return;
-         }
-     }
- }

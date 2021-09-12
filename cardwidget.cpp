@@ -355,8 +355,7 @@ void CardWidget::submitCard()
 }
 void CardWidget::finishStudying()
 {
-    auto dName = linkedDeck->getName();
-    DeckStatsManager::addSnapshot(linkedDeck, dName);
+    DeckStatsManager::createSnapshot(linkedDeck);
     Q_EMIT dueCardsFinished();
 }
 void CardWidget::setButtonDayValues(int l1, int l2, int l3)
