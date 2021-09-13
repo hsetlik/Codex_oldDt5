@@ -25,6 +25,7 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtWidgets/QApplication>
 #include <QtCharts/QValueAxis>
+#include <QDateTimeAxis>
 //=================================================================
 DeckStatsWidget::DeckStatsWidget(QString name, QWidget *parent) :
     QWidget(parent),
@@ -143,27 +144,32 @@ QChart* DeckStatsWidget::snapshotChartForType(SnapshotType type)
     auto map = manager.snapshotGraph(type);
     auto name = DeckSnapshot::snapshotTypeNames()[(int)type];
     chart->setTitle(name);
+    chart->legend()->hide();
     auto series = new QLineSeries(chart);
     double maxValue = 0.0f;
     int idx = 0;
     for(auto& value : map)
     {
-        QPointF point((double)idx, value.second);
-        printf("Snapshot point at: %lf, %lf\n", point.x(), point.y());
-        if(value.second > maxValue)
-            maxValue = value.second;
-        series->append(point);
-        ++idx;
+        auto dTime = value.first.startOfDay();
+        series->append(dTime.toMSecsSinceEpoch(), value.second);
     }
     chart->addSeries(series);
-    //set up axes
-    chart->createDefaultAxes();
-    chart->axes(Qt::Horizontal).first()->setRange(0, (int)map.size() - 1);
-    chart->axes(Qt::Vertical).first()->setRange(0, (int)maxValue);
+
+    QDateTimeAxis *axisX = new QDateTimeAxis;
+    axisX->setTickCount(map.size());
+    axisX->setFormat("dd/MM");
+    axisX->setTitleText("Date");
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis *axisY = new QValueAxis;
+    axisY->setLabelFormat("%i");
+    axisY->setTitleText(name);
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
 
     return chart;
 }
-
 
 void DeckStatsWidget::setToSnapshotType(int type)
 {
